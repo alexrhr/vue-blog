@@ -39,30 +39,30 @@ const drawer = ref(true)
     </VAppBar>
 
     <VBottomNavigation grow >
-      <VBtn size="large" link to="/users">
-        <VIcon>mdi-account-multiple</VIcon>
-        Users
-      </VBtn>
       <VBtn size="large" link to="/posts">
         <VIcon>mdi-note-plus</VIcon>
-        Posts
+        Startseite
       </VBtn>
       <VBtn size="large" link to="/categories">
         <VIcon>mdi-shape</VIcon>
-        Categories
+        Finanzen
+      </VBtn>
+      <VBtn size="large" link to="/users">
+        <VIcon>mdi-account-multiple</VIcon>
+        Transaktionen hinzufügen
       </VBtn>
     </VBottomNavigation>
 
     <VNavigationDrawer mobile-breakpoint="sm" v-model="drawer" class="transparent">
       <VList>
         <VListItem :prepend-icon="BlogIcon" link to="/posts">
-          Posts
+          Startseite
         </VListItem>
         <VListItem prepend-icon="mdi-shape" link to="/categories">
-          Categories
+          Finanzen
         </VListItem>
         <VListItem prepend-icon="mdi-account-multiple" link to="/users">
-          Users
+          Transaktionen hinzufügen
         </VListItem>
       </VList>
     </VNavigationDrawer>

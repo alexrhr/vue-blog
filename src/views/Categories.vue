@@ -2,5 +2,5 @@
 </script>
 
 <template>
-  <h1>Categories</h1>
+  <h1>Finanzen</h1>
 </template>
