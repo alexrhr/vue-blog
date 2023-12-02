@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "name": "Eintrag 1",
+    "geburtstag": "10-10-2010",
+    "verhaelt": "Mutter",
+    "balance": 1000,
+    "aktiendepot": 500,
+    "debt": 500,
+    "Gehalt": 1000,
+    "sonstigeein": 50,
+    "ratenzahlung": 1000,
+    "sonstigeaus": 100
+  },
+  {
+    "id": 2,
+    "name": "Eintrag 2",
+    "geburtstag": "10-10-2010",
+    "verhaelt": "Mutter",
+    "balance": 1000,
+    "aktiendepot": 500,
+    "debt": 500,
+    "Gehalt": 1000,
+    "sonstigeein": 50,
+    "ratenzahlung": 1000,
+    "sonstigeaus": 100
+  },
+  {
+    "id": 3,
+    "name": "Eintrag 3",
+    "geburtstag": "10-10-2010",
+    "verhaelt": "Mutter",
+    "balance": 1000,
+    "aktiendepot": 500,
+    "debt": 500,
+    "Gehalt": 1000,
+    "sonstigeein": 50,
+    "ratenzahlung": 1000,
+    "sonstigeaus": 100
+  },
+  {
+    "id": 4,
+    "name": "Eintrag 4",
+    "geburtstag": "10-10-2010",
+    "verhaelt": "Mutter",
+    "balance": 1000,
+    "aktiendepot": 500,
+    "debt": 500,
+    "Gehalt": 1000,
+    "sonstigeein": 50,
+    "ratenzahlung": 1000,
+    "sonstigeaus": 100
+  },
+  {
+    "id": 5,
+    "name": "Eintrag 5",
+    "geburtstag": "10-10-2010",
+    "verhaelt": "Mutter",
+    "balance": 100,
+    "aktiendepot": 500,
+    "debt": 500,
+    "Gehalt": 1000,
+    "sonstigeein": 50,
+    "ratenzahlung": 1000,
+    "sonstigeaus": 100
+  }
+]
