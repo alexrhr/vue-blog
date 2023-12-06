@@ -106,11 +106,7 @@ export default {
 </script>
 <script setup>
 </script>
-<script setup>
-</script>
-<script setup>
-</script>
-<script setup>
-</script>
-<script setup>
-</script>
+
+<template>
+  <h1>Users</h1>
+</template>

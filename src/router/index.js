@@ -5,8 +5,8 @@ import Read from "@/views/posts/Read.vue";
 import Create from "@/views/posts/Create.vue";
 
 const routes = [
+  {path: '/startseite', component: Overview},
   {path: '/', component: Overview},
-  {path: '/posts', component: Overview},
   {path: '/posts/:id', component: Read},
   {path: '/posts/create', component: Create},
   {path: '/posts/update', component: Overview},
