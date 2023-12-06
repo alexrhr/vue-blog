@@ -9,7 +9,7 @@ const drawer = ref(true)
   <VLayout row wrap rounded rounded-md align-start>
     <VAppBar rounded class="transparent">
       <VAppBarNavIcon variant="text" @click.stop="drawer = !drawer"/>
-      <VToolbarTitle>Travel Blog</VToolbarTitle>
+      <VToolbarTitle>Budget-Planer</VToolbarTitle>
 
       <VSpacer></VSpacer>
       <VBtn variant="text" icon="mdi-magnify"></VBtn>
@@ -39,15 +39,15 @@ const drawer = ref(true)
     </VAppBar>
 
     <VBottomNavigation grow >
-      <VBtn size="large" link to="/posts">
+      <VBtn size="large" link to="/startseite">
         <VIcon>mdi-note-plus</VIcon>
         Startseite
       </VBtn>
-      <VBtn size="large" link to="/categories">
+      <VBtn size="large" link to="/finanzen">
         <VIcon>mdi-shape</VIcon>
         Finanzen
       </VBtn>
-      <VBtn size="large" link to="/users">
+      <VBtn size="large" link to="/hinzufügen">
         <VIcon>mdi-account-multiple</VIcon>
         Transaktionen hinzufügen
       </VBtn>
@@ -55,13 +55,13 @@ const drawer = ref(true)
 
     <VNavigationDrawer mobile-breakpoint="sm" v-model="drawer" class="transparent">
       <VList>
-        <VListItem :prepend-icon="BlogIcon" link to="/posts">
+        <VListItem :prepend-icon="BlogIcon" link to="/startseite">
           Startseite
         </VListItem>
-        <VListItem prepend-icon="mdi-shape" link to="/categories">
+        <VListItem prepend-icon="mdi-shape" link to="/finanzen">
           Finanzen
         </VListItem>
-        <VListItem prepend-icon="mdi-account-multiple" link to="/users">
+        <VListItem prepend-icon="mdi-account-multiple" link to="/hinzufügen">
           Transaktionen hinzufügen
         </VListItem>
       </VList>

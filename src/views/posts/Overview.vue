@@ -1,24 +1,76 @@
 <script setup>
-import PostCard from "@/components/PostCard.vue";
 </script>
 
 <template>
   <v-container>
     <h1>Startseite</h1>
     <v-row>
-      <h2>Willkommen bei Budget-Planer – deinem persönlichen Finanzmanager!</h2>
+      <v-col cols="12">
+        <v-card>
+          <v-card-title class="headline">Willkommen bei Budget-Planer – deinem persönlichen Finanzmanager!</v-card-title>
+          <v-card-text>
+            <p>Hast du dich jemals gefragt, wohin dein Geld verschwindet? Mit unserer intuitiven Finanz-App behältst du den Überblick über Einnahmen, Ausgaben und sparst Zeit beim Verfolgen deiner Finanzen.</p>
+          </v-card-text>
 
-      <p>Hast du dich jemals gefragt, wohin dein Geld verschwindet? Mit unserer intuitiven Finanz-App behältst du den Überblick über Einnahmen, Ausgaben und sparst Zeit beim Verfolgen deiner Finanzen.</p>
+          <v-list>
+            <v-list-item-group>
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-chart-bar</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Übersichtliche Finanzstatistiken</v-list-item-title>
+                  <v-list-item-subtitle>Verfolge mühelos dein Budget, sieh dir Ausgabenmuster an und entdecke, wie du deine finanziellen Ziele erreichen kannst.</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-      <ul>
-        <li>📊 <strong>Übersichtliche Finanzstatistiken:</strong> Verfolge mühelos dein Budget, sieh dir Ausgabenmuster an und entdecke, wie du deine finanziellen Ziele erreichen kannst.</li>
-        <li>💸 <strong>Transaktionshistorie:</strong> Jede Ausgabe im Blick! Von Großeinkäufen bis hin zu kleinen Kaffeeausgaben – behalte alles im Auge, um fundierte finanzielle Entscheidungen zu treffen.</li>
-        <li>📅 <strong>Budgetplanung:</strong> Setze klare Ziele und erstelle Budgets für jeden Lebensbereich. Mit benutzerfreundlichen Tools helfen wir dir, deine finanziellen Ziele zu erreichen.</li>
-        <li>🔒 <strong>Sicherheit an erster Stelle:</strong> Deine Finanzen sind sensibel – wir sorgen dafür, dass sie sicher und geschützt sind. Modernste Verschlüsselungstechnologien garantieren deine Privatsphäre.</li>
-        <li>🌐 <strong>Überall verfügbar:</strong> Greife von überall auf deine Finanzdaten zu. Egal, ob du zu Hause oder unterwegs bist – deine Finanzen sind immer in Griffweite.</li>
-      </ul>
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-cash-multiple</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Transaktionshistorie</v-list-item-title>
+                  <v-list-item-subtitle>Jede Ausgabe im Blick! Von Großeinkäufen bis hin zu kleinen Kaffeeausgaben – behalte alles im Auge, um fundierte finanzielle Entscheidungen zu treffen.</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
 
-      <p>Starte noch heute und erlebe, wie einfach Finanzmanagement sein kann. Budget-Planer – Dein verlässlicher Partner für finanzielle Freiheit!</p>
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-calendar-month</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Budgetplanung</v-list-item-title>
+                  <v-list-item-subtitle>Setze klare Ziele und erstelle Budgets für jeden Lebensbereich. Mit benutzerfreundlichen Tools helfen wir dir, deine finanziellen Ziele zu erreichen.</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-lock</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Sicherheit an erster Stelle</v-list-item-title>
+                  <v-list-item-subtitle>Deine Finanzen sind sensibel – wir sorgen dafür, dass sie sicher und geschützt sind. Modernste Verschlüsselungstechnologien garantieren deine Privatsphäre.</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-earth</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Überall verfügbar</v-list-item-title>
+                  <v-list-item-subtitle>Greife von überall auf deine Finanzdaten zu. Egal, ob du zu Hause oder unterwegs bist – deine Finanzen sind immer in Griffweite.</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+
+          <v-card-text>
+            <p>Starte noch heute und erlebe, wie einfach Finanzmanagement sein kann. Budget-Planer – Dein verlässlicher Partner für finanzielle Freiheit!</p>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -30,25 +82,14 @@ export default {
 </script>
 
 <style scoped>
-h2 {
+.headline {
   font-size: 2em;
-  color: #2d2525;
+  color: #3498db;
 }
 
 p {
   font-size: 1.2em;
-  color: #2d2323;
+  color: #555;
   line-height: 1.6;
 }
-
-ul {
-  list-style-type: none;
-  color: #181515;
-  padding: 0;
-}
-
-li {
-  margin-bottom: 10px;
-}
 </style>
-
