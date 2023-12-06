@@ -1,3 +1,4 @@
+
 <script setup>
 import BlogIcon from "@/components/icons/IconBlog.vue";
 import {ref} from 'vue'
@@ -12,20 +13,7 @@ const drawer = ref(true)
       <VToolbarTitle>Budget-Planer</VToolbarTitle>
 
       <VSpacer></VSpacer>
-      <VBtn variant="text" icon="mdi-magnify"></VBtn>
-      <VBtn variant="text" icon>
-        <VIcon>mdi-filter</VIcon>
-        <VMenu activator="parent">
-          <VList density="compact">
-            <VListItem>Attractions</VListItem>
-            <VListItem>Beaches</VListItem>
-            <VListItem>Cities</VListItem>
-            <VListItem>Escape Rooms</VListItem>
-            <VListItem>Mountains</VListItem>
-            <VListItem>Museums</VListItem>
-          </VList>
-        </VMenu>
-      </VBtn>
+
 
       <VBtn variant="text" icon>
         <VIcon>mdi-dots-vertical</VIcon>
@@ -78,4 +66,5 @@ const drawer = ref(true)
 
   </VLayout>
 </template>
+
 

@@ -8,11 +8,11 @@ const routes = [
   {path: '/startseite', component: Overview},
   {path: '/', component: Overview},
   {path: '/posts/:id', component: Read},
-  {path: '/posts/create', component: Create},
+  {path: '/hinzufügen', component: Create},
   {path: '/posts/update', component: Overview},
   {path: '/posts/save', component: Overview},
   {path: '/posts/delete', component: Overview},
   {path: '/categories', component: Categories},
-  {path: '/users', component: Users},
+  {path: '/finanzen', component: Users},
 ];
 export default routes;
