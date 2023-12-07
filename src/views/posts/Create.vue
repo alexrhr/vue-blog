@@ -74,7 +74,7 @@ async function saveUser() {
   }
 
   // forward to overview page
-  router.push('/users');
+  router.push('/');
 }
 </script>
 
