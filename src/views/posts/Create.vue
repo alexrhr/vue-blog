@@ -1,37 +1,12 @@
-<template>
-  <v-container>
-    <h1>User List</h1>
-    <v-row>
-      <v-col v-for="user in users" :key="user.id" sm="6" lg="4">
-        <v-card @click="viewUserDetails(user.id)">
-          <v-card-title>{{ user.name }}</v-card-title>
-          <v-card-subtitle>{{ user.balance }}</v-card-subtitle>
-          <v-card-text>{{ user.verhaelt }}</v-card-text>
-
-          <!-- Separate v-card for the v-text-field -->
-          <v-card>
-            <v-text-field v-model="withdrawAmount" label="Withdraw Amount" type="number" />
-          </v-card>
-
-          <!-- Separate v-card for the Withdraw button -->
-          <v-card>
-            <v-btn @click.stop="withdraw(user.id, withdrawAmount)">Withdraw</v-btn>
-          </v-card>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
-</template>
-
 <script setup>
-import { collection, getDoc, getDocs, doc, updateDoc } from 'firebase/firestore';
-import db from '/src/views/db';
 import { ref, onMounted } from 'vue';
+import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
+import db from '/src/views/db';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const users = ref([]);
-const withdrawAmount = ref(0);
+const editedUser = ref(null);
 
 onMounted(async () => {
   await loadUsers();
@@ -46,15 +21,8 @@ async function loadUsers() {
     return {
       id: doc.id,
       name: userData.name,
-      geburtstag: userData.geburtstag,
-      verhaelt: userData.verhaelt,
       balance: userData.balance,
-      aktiendepot: userData.aktiendepot,
-      debt: userData.debt,
-      Gehalt: userData.Gehalt,
-      sonstigeein: userData.sonstigeein,
-      ratenzahlung: userData.ratenzahlung,
-      sonstigeaus: userData.sonstigeaus,
+      verhaelt: userData.verhaelt,
     };
   });
 }
@@ -63,31 +31,68 @@ function viewUserDetails(userId) {
   router.push(`/users/${userId}`);
 }
 
-async function withdraw(userId, amount) {
-  const userRef = doc(collection(db, 'benutzer'), userId);
+function editUser(user) {
+  editedUser.value = { ...user };
+}
 
-  try {
-    // Get the current user data
-    const userSnapshot = await getDoc(userRef);
-    const userData = userSnapshot.data();
-
-    // Check if the withdrawal amount is valid
-    if (amount > 0 && amount <= userData.balance) {
-      // Update the balance by subtracting the withdrawal amount
-      await updateDoc(userRef, {
-        balance: userData.balance - amount,
-      });
-
-      // Reload the user list after the withdrawal
-      await loadUsers();
-
-      // Navigate to the main page
-      router.push('/');
-    } else {
-      console.error('Invalid withdrawal amount or insufficient balance.');
-    }
-  } catch (error) {
-    console.error('Error fetching user data:', error);
+async function saveUserChanges() {
+  if (editedUser.value) {
+    const userDoc = doc(db, 'benutzer', editedUser.value.id);
+    await updateDoc(userDoc, {
+      name: editedUser.value.name,
+      balance: editedUser.value.balance,
+      verhaelt: editedUser.value.verhaelt,
+    });
+    // Reload the user list after updating
+    await loadUsers();
+    editedUser.value = null;
   }
 }
+
+function cancelEdit() {
+  editedUser.value = null;
+}
 </script>
+
+<template>
+  <v-container>
+    <h1>User List</h1>
+    <v-row>
+      <v-col v-for="user in users" :key="user.id" sm="6" lg="4">
+        <v-card>
+          <v-card-title>{{ user.name }}</v-card-title>
+          <v-card-subtitle>{{ user.balance }}</v-card-subtitle>
+          <v-card-text>{{ user.verhaelt }}</v-card-text>
+
+          <v-card-actions>
+            <v-btn color="red-darken-4" variant="elevated" @click="deleteUser(user.id)">
+              Delete
+            </v-btn>
+            <v-btn color="primary" variant="elevated" @click="viewUserDetails(user.id)">
+              View Details
+            </v-btn>
+            <v-btn color="green" variant="elevated" @click="editUser(user)">
+              Update
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Edit User Dialog -->
+    <v-dialog v-if="editedUser" v-model="editedUser" persistent>
+      <v-card>
+        <v-card-title>Edit User</v-card-title>
+        <v-card-text>
+          <v-form @submit.prevent="saveUserChanges">
+            <v-text-field v-model="editedUser.name" label="Name"></v-text-field>
+            <v-text-field v-model="editedUser.balance" label="Balance"></v-text-field>
+            <v-text-field v-model="editedUser.verhaelt" label="Verhaelt"></v-text-field>
+            <v-btn type="submit" color="primary">Save Changes</v-btn>
+            <v-btn @click="cancelEdit" color="grey">Cancel</v-btn>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+  </v-container>
+</template>

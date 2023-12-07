@@ -69,25 +69,16 @@ async function saveUser() {
   };
 
   if (isNewUser.value) {
-    // create a new User in Firestore
     await addDoc(userRef, newUserData);
   } else {
-    // update the existing User in Firestore
     await setDoc(doc(userRef, props.id), newUserData);
   }
 
-  // forward to overview page
+
   router.push('/');
 }
 
-// Function to withdraw money
-function withdrawMoney() {
-  const withdrawal = withdrawalAmount.value;
-  if (withdrawal > 0 && withdrawal <= balance.value) {
-    // Update the balance after withdrawal
-    balance.value -= withdrawal;
-  }
-}
+
 </script>
 
 <template>
@@ -117,8 +108,6 @@ function withdrawMoney() {
             <v-btn type="submit" size="large" elevation="4" color="primary" class="float-end">Save</v-btn>
           </v-form>
 
-          <!-- Button to withdraw money -->
-          <v-btn @click="withdrawMoney" color="primary" class="mt-4">Withdraw Money</v-btn>
         </v-sheet>
       </v-col>
     </v-row>
