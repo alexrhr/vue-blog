@@ -1,106 +1,52 @@
-<!--
 <script setup>
-</script>
+import { collection, getDocs } from 'firebase/firestore';
+import db from '/src/views/db';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
-<template>
-  <h1>Post Detail</h1>
-</template>
--->
+const router = useRouter();
+const users = ref([]);
 
+onMounted(async () => {
+  await loadUsers();
+});
 
-<script setup>
-import {doc, deleteDoc, getDoc} from 'firebase/firestore'
-import db from '/src/views/db'
-import {onMounted, ref, inject, computed} from 'vue'
-import {useRouter} from "vue-router";
+async function loadUsers() {
+  const usersCollection = collection(db, 'benutzer');
+  const usersSnapshot = await getDocs(usersCollection);
 
-const props = defineProps(['id'])
-const router = useRouter()
-const categories = inject('categories')
-const subtitle = computed(() => {
-  // collect the category names
-  const cats = post.value.categories?.map(cat => categories[cat])
-  return cats?.join(', ')
-})
-
-// Vue variables
-const post = ref({})
-
-onMounted(async () =>  await loadPost(props.id))
-
-// load the post from FireStore, using it's ID
-async function loadPost(id) {
-  const postDoc = await getDoc(doc(db, "posts", id))
-
-  if (postDoc.exists()) {
-    post.value = {
-      title: postDoc.data().title,
-      body: postDoc.data().body,
-      categories: postDoc.data().categories?.map(cat => cat.id)
-    }
-  } else {
-    // if post with this ID doesn't exist, show a warning
-    post.value = {title: 'No entry with post id ' + props.id}
-  }
+  users.value = usersSnapshot.docs.map((doc) => {
+    const userData = doc.data();
+    return {
+      id: doc.id,
+      name: userData.name,
+      geburtstag: userData.geburtstag,
+      verhaelt: userData.verhaelt,
+      balance: userData.balance,
+      aktiendepot: userData.aktiendepot,
+      debt: userData.debt,
+      Gehalt: userData.Gehalt,
+      sonstigeein: userData.sonstigeein,
+      ratenzahlung: userData.ratenzahlung,
+      sonstigeaus: userData.sonstigeaus,
+    };
+  });
 }
 
-// delete the post from FireStore, using it's ID
-async function deletePost(id) {
-  await deleteDoc(doc(db, "posts", id))
-  // forward to overview page
-  router.push('/posts')
+function viewUserDetails(userId) {
+  router.push(`/users/${userId}`);
 }
 </script>
 
 <template>
   <v-container>
+    <h1>User List</h1>
     <v-row>
-      <v-col sm="8" lg="4">
-        <v-card class="mx-auto" :title="post.title" :subtitle="subtitle">
-          <template v-slot:prepend>
-            <v-avatar image="/male_avatar.png"/>
-          </template>
-          <v-divider/>
-          <v-card-text>
-            {{ post.body }}
-          </v-card-text>
-
-          <v-card-actions>
-            <v-dialog width="auto">
-              <template v-slot:activator="{ props }">
-                <v-btn color="red-darken-4" variant="elevated" v-bind="props">Delete</v-btn>
-              </template>
-              <template v-slot:default="{ isActive }">
-                <v-card>
-                  <v-toolbar color="red-darken-4" title="Delete posting"/>
-                  <v-card-text>
-                    <div class="text-h4 pa-8">
-                      Are you sure that you<br/> want to delete this post?
-                    </div>
-                  </v-card-text>
-                  <v-card-actions class="justify-space-between">
-                    <v-btn variant="elevated" color="grey-darken-1"
-                           @click="isActive.value = false">
-                      Cancel
-                    </v-btn>
-                    <v-btn variant="elevated" color="red-darken-4"
-                           @click="deletePost(props.id)">
-                      Yes, delete
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </template>
-            </v-dialog>
-
-            <v-btn color="primary" variant="elevated" link :to="'/posts/edit/'+props.id">
-              Edit
-            </v-btn>
-            <v-col class="text-right">
-              <v-btn color="grey-darken-1" variant="elevated" link to="/posts">
-                Close
-              </v-btn>
-            </v-col>
-          </v-card-actions>
+      <v-col v-for="user in users" :key="user.id" sm="6" lg="4">
+        <v-card @click="viewUserDetails(user.id)">
+          <v-card-title>{{ user.name }}</v-card-title>
+          <v-card-subtitle>{{ user.geburtstag }}</v-card-subtitle>
+          <v-card-text>{{ user.verhaelt }}</v-card-text>
         </v-card>
       </v-col>
     </v-row>
