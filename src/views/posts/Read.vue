@@ -1,7 +1,7 @@
 <script setup>
-import { collection, getDocs } from 'firebase/firestore';
-import db from '/src/views/db';
 import { ref, onMounted } from 'vue';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import db from '/src/views/db';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -20,21 +20,20 @@ async function loadUsers() {
     return {
       id: doc.id,
       name: userData.name,
-      geburtstag: userData.geburtstag,
-      verhaelt: userData.verhaelt,
       balance: userData.balance,
-      aktiendepot: userData.aktiendepot,
-      debt: userData.debt,
-      Gehalt: userData.Gehalt,
-      sonstigeein: userData.sonstigeein,
-      ratenzahlung: userData.ratenzahlung,
-      sonstigeaus: userData.sonstigeaus,
+      verhaelt: userData.verhaelt,
     };
   });
 }
 
 function viewUserDetails(userId) {
   router.push(`/users/${userId}`);
+}
+
+async function deleteUser(userId) {
+  await deleteDoc(doc(db, 'benutzer', userId));
+  // Reload the user list after deletion
+  await loadUsers();
 }
 </script>
 
@@ -43,10 +42,19 @@ function viewUserDetails(userId) {
     <h1>User List</h1>
     <v-row>
       <v-col v-for="user in users" :key="user.id" sm="6" lg="4">
-        <v-card @click="viewUserDetails(user.id)">
+        <v-card>
           <v-card-title>{{ user.name }}</v-card-title>
-          <v-card-subtitle>{{ user.geburtstag }}</v-card-subtitle>
+          <v-card-subtitle>{{ user.balance }}</v-card-subtitle>
           <v-card-text>{{ user.verhaelt }}</v-card-text>
+
+          <v-card-actions>
+            <v-btn color="red-darken-4" variant="elevated" @click="deleteUser(user.id)">
+              Delete
+            </v-btn>
+            <v-btn color="primary" variant="elevated" @click="viewUserDetails(user.id)">
+              View Details
+            </v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>

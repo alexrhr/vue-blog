@@ -1,107 +1,93 @@
-<script setup>
-import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
-import { useRouter } from 'vue-router';
-import { onMounted, ref } from "vue";
-import db from '/src/views/db';
-
-const props = defineProps(['id']);
-const router = useRouter();
-
-const isNewUser = ref(true);
-const name = ref('');
-const geburtstag = ref('');
-const verhaelt = ref('');
-const balance = ref(0);
-const aktiendepot = ref(0);
-const debt = ref(0);
-const Gehalt = ref(0);
-const sonstigeein = ref(0);
-const ratenzahlung = ref(0);
-const sonstigeaus = ref(0);
-
-onMounted(async () => {
-  // only execute for an existing post
-  if (props.id) await loadUser(props.id);
-});
-
-// loads the user from Firestore, using its ID
-async function loadUser(id) {
-  const userDoc = doc(collection(db, "benutzer"), id);
-  const user = await getDoc(userDoc);
-
-  if (user.exists()) {
-    isNewUser.value = false;
-    const userData = user.data();
-    name.value = userData.name || '';
-    geburtstag.value = userData.geburtstag || '';
-    verhaelt.value = userData.verhaelt || '';
-    balance.value = userData.balance || 0;
-    aktiendepot.value = userData.aktiendepot || 0;
-    debt.value = userData.debt || 0;
-    Gehalt.value = userData.Gehalt || 0;
-    sonstigeein.value = userData.sonstigeein || 0;
-    ratenzahlung.value = userData.ratenzahlung || 0;
-    sonstigeaus.value = userData.sonstigeaus || 0;
-  } else {
-    // if user with this ID doesn't exist, show a warning
-    name.value = 'No entry with user id ' + props.id;
-  }
-}
-
-// saves the form data to Firestore
-async function saveUser() {
-  const userRef = collection(db, "benutzer");
-  const newUserData = {
-    name: name.value,
-    geburtstag: geburtstag.value,
-    verhaelt: verhaelt.value,
-    balance: balance.value,
-    aktiendepot: aktiendepot.value,
-    debt: debt.value,
-    Gehalt: Gehalt.value,
-    sonstigeein: sonstigeein.value,
-    ratenzahlung: ratenzahlung.value,
-    sonstigeaus: sonstigeaus.value
-    // Füge weitere Felder hinzu, wenn benötigt
-  };
-
-  if (isNewUser.value) {
-    // create a new User in Firestore
-    await addDoc(userRef, newUserData);
-  } else {
-    // update the existing User in Firestore
-    await setDoc(doc(userRef, props.id), newUserData);
-  }
-
-  // forward to overview page
-  router.push('/');
-}
-</script>
-
 <template>
   <v-container>
-    <h1>{{ isNewUser ? 'Create new user' : `Edit '${name}'` }}</h1>
+    <h1>User List</h1>
     <v-row>
-      <v-col sm="8" lg="4">
-        <v-sheet class="pa-3" elevation="4">
-          <v-form @submit.prevent="saveUser">
-            <v-text-field label="Name" variant="outlined" required v-model="name" placeholder="Enter user name..."/>
-            <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Enter birthday..."/>
-            <v-text-field label="Verhaelt" variant="outlined" v-model="verhaelt" placeholder="Enter relationship..."/>
-            <v-text-field label="Balance" variant="outlined" type="number" v-model="balance" placeholder="Enter balance..."/>
-            <v-text-field label="Aktiendepot" variant="outlined" type="number" v-model="aktiendepot" placeholder="Enter stock portfolio..."/>
-            <v-text-field label="Debt" variant="outlined" type="number" v-model="debt" placeholder="Enter debt..."/>
-            <v-text-field label="Gehalt" variant="outlined" type="number" v-model="Gehalt" placeholder="Enter salary..."/>
-            <v-text-field label="Sonstige Einzahlung" variant="outlined" type="number" v-model="sonstigeein" placeholder="Enter other income..."/>
-            <v-text-field label="Ratenzahlung" variant="outlined" type="number" v-model="ratenzahlung" placeholder="Enter installment payment..."/>
-            <v-text-field label="Sonstige Auszahlung" variant="outlined" type="number" v-model="sonstigeaus" placeholder="Enter other expenses..."/>
-            <!-- Füge weitere Felder hinzu, wenn benötigt -->
-            <v-spacer class="mt-4"/>
-            <v-btn size="large" elevation="4" color="grey darken-1" @click="router.push('/users')">Cancel</v-btn>
-            <v-btn type="submit" size="large" elevation="4" color="primary" class="float-end">Save</v-btn>
-          </v-form>
-        </v-sheet>
+      <v-col v-for="user in users" :key="user.id" sm="6" lg="4">
+        <v-card @click="viewUserDetails(user.id)">
+          <v-card-title>{{ user.name }}</v-card-title>
+          <v-card-subtitle>{{ user.balance }}</v-card-subtitle>
+          <v-card-text>{{ user.verhaelt }}</v-card-text>
+
+          <!-- Separate v-card for the v-text-field -->
+          <v-card>
+            <v-text-field v-model="withdrawAmount" label="Withdraw Amount" type="number" />
+          </v-card>
+
+          <!-- Separate v-card for the Withdraw button -->
+          <v-card>
+            <v-btn @click.stop="withdraw(user.id, withdrawAmount)">Withdraw</v-btn>
+          </v-card>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
+
+<script setup>
+import { collection, getDoc, getDocs, doc, updateDoc } from 'firebase/firestore';
+import db from '/src/views/db';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const users = ref([]);
+const withdrawAmount = ref(0);
+
+onMounted(async () => {
+  await loadUsers();
+});
+
+async function loadUsers() {
+  const usersCollection = collection(db, 'benutzer');
+  const usersSnapshot = await getDocs(usersCollection);
+
+  users.value = usersSnapshot.docs.map((doc) => {
+    const userData = doc.data();
+    return {
+      id: doc.id,
+      name: userData.name,
+      geburtstag: userData.geburtstag,
+      verhaelt: userData.verhaelt,
+      balance: userData.balance,
+      aktiendepot: userData.aktiendepot,
+      debt: userData.debt,
+      Gehalt: userData.Gehalt,
+      sonstigeein: userData.sonstigeein,
+      ratenzahlung: userData.ratenzahlung,
+      sonstigeaus: userData.sonstigeaus,
+    };
+  });
+}
+
+function viewUserDetails(userId) {
+  router.push(`/users/${userId}`);
+}
+
+async function withdraw(userId, amount) {
+  const userRef = doc(collection(db, 'benutzer'), userId);
+
+  try {
+    // Get the current user data
+    const userSnapshot = await getDoc(userRef);
+    const userData = userSnapshot.data();
+
+    // Check if the withdrawal amount is valid
+    if (amount > 0 && amount <= userData.balance) {
+      // Update the balance by subtracting the withdrawal amount
+      await updateDoc(userRef, {
+        balance: userData.balance - amount,
+      });
+
+      // Reload the user list after the withdrawal
+      await loadUsers();
+
+      // Navigate to the main page
+      router.push('/');
+    } else {
+      console.error('Invalid withdrawal amount or insufficient balance.');
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+  }
+}
+</script>

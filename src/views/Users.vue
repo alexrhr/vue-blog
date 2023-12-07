@@ -1,109 +1,126 @@
-<template>
-  <div>
-    <h1>Finanzen</h1>
-    <div v-for="user in users" :key="user.id">
-      <!--<p>Benutzer: {{ user.name }}</p>
-      <p>Kontostand: {{ user.balance }}</p>-->
-
-      <!-- VCard für jeden Benutzer -->
-      <VCard class="mx-auto" max-width="280" :title="user.name" :subtitle="`${user.name} on 2023-11-15, 05:15`">
-        <VDivider />
-        <VCardText>
-          Kontostand: {{ user.balance }} <p></p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.
-        </VCardText>
-        <form @submit.prevent="withdrawMoney(user.id)">
-          <label for="amount">Betrag zum Abbuchen:</label>
-          <input type="number" v-model="withdrawAmount" id="amount" />
-          <button type="submit">Abheben</button>
-        </form>
-      </VCard>
-
-      <!-- Formular zum Abbuchen -->
-
-
-      <br /><br />
-    </div>
-    <div>
-      <form @submit.prevent="abbuchen">
-        <label for="amount">Betrag zum Abbuchen:</label>
-        <input type="number" v-model="withdrawAmount" id="amount" />
-        <button type="submit">Abheben</button>
-      </form>
-    </div>
-  </div>
-</template>
-
-<script>
-import userData from "./users.json";
-//const fs = require('fs');
-//const path = require('path');
-
-/*
-export default {
-  data() {
-    return {
-      users: userData,
-      withdrawAmount: 0,
-    };
-  },
-  methods: {
-    withdrawMoney(userId) {
-      // Finde den Benutzer mit der angegebenen ID
-      const user = this.users.find((u) => u.id === userId);
-
-      if (user) {
-        // Überprüfe, ob genug Geld auf dem Konto ist
-        if (user.balance >= this.withdrawAmount) {
-          // Führe die Abbuchung durch
-          user.balance -= this.withdrawAmount;
-        } else {
-          // Falls nicht genug Geld vorhanden ist, kannst du hier eine entsprechende Fehlermeldung einfügen
-          console.log("Nicht genug Geld auf dem Konto");
-        }
-      }
-
-      // Setze den Abbuchungsbetrag zurück
-      this.withdrawAmount = 0;
-    },
-  },
-};
-*/
-export default {
-  data() {
-    return {
-      users: userData,
-      withdrawAmount: 0,
-    };
-  },
-  methods: {
-    withdrawMoney(userId) {
-      // Finde den Benutzer mit der angegebenen ID
-      const user = this.users.find((u) => u.id === userId);
-
-      if (user) {
-        // Überprüfe, ob genug Geld auf dem Konto ist
-        if (user.balance >= this.withdrawAmount) {
-          // Führe die Abbuchung durch
-          user.balance -= this.withdrawAmount;
-
-          // Speichere die Änderungen in der JSON-Datei
-          const jsonFilePath = path.resolve(__dirname, 'users.json');
-          const jsonString = JSON.stringify(this.users, null, 2);
-          fs.writeFileSync(jsonFilePath, jsonString);
-        } else {
-          // Falls nicht genug Geld vorhanden ist, kannst du hier eine entsprechende Fehlermeldung einfügen
-          console.log("Nicht genug Geld auf dem Konto");
-        }
-      }
-
-      // Setze den Abbuchungsbetrag zurück
-      this.withdrawAmount = 0;
-    },
-  },
-};
-
-</script>
 <script setup>
+import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { useRouter } from 'vue-router';
+import { onMounted, ref } from "vue";
+import db from '/src/views/db';
+
+const props = defineProps(['id']);
+const router = useRouter();
+
+const isNewUser = ref(true);
+const name = ref('');
+const geburtstag = ref('');
+const verhaelt = ref('');
+const balance = ref(0);
+const aktiendepot = ref(0);
+const debt = ref(0);
+const Gehalt = ref(0);
+const sonstigeein = ref(0);
+const ratenzahlung = ref(0);
+const sonstigeaus = ref(0);
+
+// New input field for withdrawal
+const withdrawalAmount = ref(0);
+
+onMounted(async () => {
+  // only execute for an existing user
+  if (props.id) await loadUser(props.id);
+});
+
+// loads the user from Firestore, using its ID
+async function loadUser(id) {
+  const userDoc = doc(collection(db, "benutzer"), id);
+  const user = await getDoc(userDoc);
+
+  if (user.exists()) {
+    isNewUser.value = false;
+    const userData = user.data();
+    name.value = userData.name || '';
+    geburtstag.value = userData.geburtstag || '';
+    verhaelt.value = userData.verhaelt || '';
+    balance.value = userData.balance || 0;
+    aktiendepot.value = userData.aktiendepot || 0;
+    debt.value = userData.debt || 0;
+    Gehalt.value = userData.Gehalt || 0;
+    sonstigeein.value = userData.sonstigeein || 0;
+    ratenzahlung.value = userData.ratenzahlung || 0;
+    sonstigeaus.value = userData.sonstigeaus || 0;
+  } else {
+    // if user with this ID doesn't exist, show a warning
+    name.value = 'No entry with user id ' + props.id;
+  }
+}
+
+// saves the form data to Firestore
+async function saveUser() {
+  const userRef = collection(db, "benutzer");
+  const newUserData = {
+    name: name.value,
+    geburtstag: geburtstag.value,
+    verhaelt: verhaelt.value,
+    balance: balance.value,
+    aktiendepot: aktiendepot.value,
+    debt: debt.value,
+    Gehalt: Gehalt.value,
+    sonstigeein: sonstigeein.value,
+    ratenzahlung: ratenzahlung.value,
+    sonstigeaus: sonstigeaus.value
+    // Füge weitere Felder hinzu, wenn benötigt
+  };
+
+  if (isNewUser.value) {
+    // create a new User in Firestore
+    await addDoc(userRef, newUserData);
+  } else {
+    // update the existing User in Firestore
+    await setDoc(doc(userRef, props.id), newUserData);
+  }
+
+  // forward to overview page
+  router.push('/');
+}
+
+// Function to withdraw money
+function withdrawMoney() {
+  const withdrawal = withdrawalAmount.value;
+  if (withdrawal > 0 && withdrawal <= balance.value) {
+    // Update the balance after withdrawal
+    balance.value -= withdrawal;
+  }
+}
 </script>
 
+<template>
+  <v-container>
+    <h1>{{ isNewUser ? 'Create new user' : `Edit '${name}'` }}</h1>
+    <v-row>
+      <v-col sm="8" lg="4">
+        <v-sheet class="pa-3" elevation="4">
+          <v-form @submit.prevent="saveUser">
+            <v-text-field label="Name" variant="outlined" required v-model="name" placeholder="Enter user name..."/>
+            <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Enter birthday..."/>
+            <v-text-field label="Verhaelt" variant="outlined" v-model="verhaelt" placeholder="Enter relationship..."/>
+            <v-text-field label="Balance" variant="outlined" type="number" v-model="balance" placeholder="Enter balance..."/>
+            <v-text-field label="Aktiendepot" variant="outlined" type="number" v-model="aktiendepot" placeholder="Enter stock portfolio..."/>
+            <v-text-field label="Debt" variant="outlined" type="number" v-model="debt" placeholder="Enter debt..."/>
+            <v-text-field label="Gehalt" variant="outlined" type="number" v-model="Gehalt" placeholder="Enter salary..."/>
+            <v-text-field label="Sonstige Einzahlung" variant="outlined" type="number" v-model="sonstigeein" placeholder="Enter other income..."/>
+            <v-text-field label="Ratenzahlung" variant="outlined" type="number" v-model="ratenzahlung" placeholder="Enter installment payment..."/>
+            <v-text-field label="Sonstige Auszahlung" variant="outlined" type="number" v-model="sonstigeaus" placeholder="Enter other expenses..."/>
+            <!-- Füge weitere Felder hinzu, wenn benötigt -->
+
+            <!-- New input field for withdrawal -->
+            <v-text-field label="Withdrawal Amount" variant="outlined" type="number" v-model="withdrawalAmount" placeholder="Enter withdrawal amount..."/>
+
+            <v-spacer class="mt-4"/>
+            <v-btn size="large" elevation="4" color="grey darken-1" @click="router.push('/users')">Cancel</v-btn>
+            <v-btn type="submit" size="large" elevation="4" color="primary" class="float-end">Save</v-btn>
+          </v-form>
+
+          <!-- Button to withdraw money -->
+          <v-btn @click="withdrawMoney" color="primary" class="mt-4">Withdraw Money</v-btn>
+        </v-sheet>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
