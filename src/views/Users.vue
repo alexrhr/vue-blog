@@ -46,12 +46,10 @@ async function loadUser(id) {
     ratenzahlung.value = userData.ratenzahlung || 0;
     sonstigeaus.value = userData.sonstigeaus || 0;
   } else {
-    // if user with this ID doesn't exist, show a warning
     name.value = 'No entry with user id ' + props.id;
   }
 }
 
-// saves the form data to Firestore
 async function saveUser() {
   const userRef = collection(db, "benutzer");
   const newUserData = {
@@ -65,7 +63,6 @@ async function saveUser() {
     sonstigeein: sonstigeein.value,
     ratenzahlung: ratenzahlung.value,
     sonstigeaus: sonstigeaus.value
-    // Füge weitere Felder hinzu, wenn benötigt
   };
 
   if (isNewUser.value) {
@@ -83,25 +80,23 @@ async function saveUser() {
 
 <template>
   <v-container>
-    <h1>{{ isNewUser ? 'Create new user' : `Edit '${name}'` }}</h1>
+    <h1>{{ isNewUser ? 'Benutzer hinzufügen' : `Edit '${name}'` }}</h1>
     <v-row>
       <v-col sm="8" lg="4">
         <v-sheet class="pa-3" elevation="4">
           <v-form @submit.prevent="saveUser">
-            <v-text-field label="Name" variant="outlined" required v-model="name" placeholder="Enter user name..."/>
-            <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Enter birthday..."/>
-            <v-text-field label="Verhaelt" variant="outlined" v-model="verhaelt" placeholder="Enter relationship..."/>
-            <v-text-field label="Balance" variant="outlined" type="number" v-model="balance" placeholder="Enter balance..."/>
-            <v-text-field label="Aktiendepot" variant="outlined" type="number" v-model="aktiendepot" placeholder="Enter stock portfolio..."/>
-            <v-text-field label="Debt" variant="outlined" type="number" v-model="debt" placeholder="Enter debt..."/>
-            <v-text-field label="Gehalt" variant="outlined" type="number" v-model="Gehalt" placeholder="Enter salary..."/>
-            <v-text-field label="Sonstige Einzahlung" variant="outlined" type="number" v-model="sonstigeein" placeholder="Enter other income..."/>
-            <v-text-field label="Ratenzahlung" variant="outlined" type="number" v-model="ratenzahlung" placeholder="Enter installment payment..."/>
-            <v-text-field label="Sonstige Auszahlung" variant="outlined" type="number" v-model="sonstigeaus" placeholder="Enter other expenses..."/>
-            <!-- Füge weitere Felder hinzu, wenn benötigt -->
+            <v-text-field label="Name" variant="outlined" required v-model="name" placeholder="Name der neuen Person"/>
+            <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Geburtstag der Person"/>
+            <v-text-field label="Verhältnis" variant="outlined" v-model="verhaelt" placeholder="Verhältnis zum Benutzer"/>
+            <v-text-field label="Kontostand" variant="outlined" type="number" v-model="balance" placeholder="Kontostand"/>
+            <v-text-field label="Aktiendepot" variant="outlined" type="number" v-model="aktiendepot" placeholder="Aktueller Wert des Aktiendebots"/>
+            <v-text-field label="Schulden" variant="outlined" type="number" v-model="debt" placeholder="Schulden der Person"/>
+            <v-text-field label="Gehalt" variant="outlined" type="number" v-model="Gehalt" placeholder="Gehalt der Person"/>
+            <v-text-field label="Sonstige Einnahmen" variant="outlined" type="number" v-model="sonstigeein" placeholder="Sonstige Einnahmen"/>
+            <v-text-field label="Ratenzahlung" variant="outlined" type="number" v-model="ratenzahlung" placeholder="Falls Schulden vorhanden was sind die Ratenzahlungen"/>
+            <v-text-field label="Sonstige Ausgaben" variant="outlined" type="number" v-model="sonstigeaus" placeholder="Andere Ausgaben"/>
 
-            <!-- New input field for withdrawal -->
-            <v-text-field label="Withdrawal Amount" variant="outlined" type="number" v-model="withdrawalAmount" placeholder="Enter withdrawal amount..."/>
+            <v-text-field label="Withdrawal Amount" variant="outlined" type="number" v-model="withdrawalAmount" placeholder="Wieviel möchten sie abbuchen"/>
 
             <v-spacer class="mt-4"/>
             <v-btn size="large" elevation="4" color="grey darken-1" @click="router.push('/users')">Cancel</v-btn>

@@ -57,7 +57,7 @@ async function saveUserChanges() {
       ratenzahlung: editedUser.value.ratenzahlung,
       sonstigeaus: editedUser.value.sonstigeaus,
     });
-    // Reload the user list after updating
+
     await loadUsers();
     editedUser.value = null;
   }
@@ -80,36 +80,35 @@ function cancelEdit() {
 
           <v-card-actions>
             <v-btn color="red-darken-4" variant="elevated" @click="deleteUser(user.id)">
-              Delete
+              Löschen
             </v-btn>
             <v-btn color="primary" variant="elevated" @click="viewUserDetails(user.id)">
-              View Details
+              Ansehen
             </v-btn>
             <v-btn color="green" variant="elevated" @click="editUser(user)">
-              Update
+              Aktualisieren
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
 
-    <!-- Edit User Dialog -->
     <v-dialog v-if="editedUser" v-model="editedUser" persistent>
       <v-card>
         <v-card-title>Edit User</v-card-title>
         <v-card-text>
           <v-form @submit.prevent="saveUserChanges">
             <v-text-field v-model="editedUser.name" label="Name"></v-text-field>
-            <v-text-field v-model="editedUser.balance" label="Balance"></v-text-field>
-            <v-text-field v-model="editedUser.verhaelt" label="Verhaelt"></v-text-field>
+            <v-text-field v-model="editedUser.balance" label="Kontostand"></v-text-field>
+            <v-text-field v-model="editedUser.verhaelt" label="Verhältnis"></v-text-field>
             <v-text-field v-model="editedUser.geburtstag" label="Geburtstag"></v-text-field>
             <v-text-field v-model="editedUser.aktiendepot" label="Aktiendepot"></v-text-field>
-            <v-text-field v-model="editedUser.debt" label="Debt"></v-text-field>
+            <v-text-field v-model="editedUser.debt" label="Schulden"></v-text-field>
             <v-text-field v-model="editedUser.gehalt" label="Gehalt"></v-text-field>
             <v-text-field v-model="editedUser.sonstigeein" label="Sonstige Einzahlung"></v-text-field>
             <v-text-field v-model="editedUser.ratenzahlung" label="Ratenzahlung"></v-text-field>
-            <v-text-field v-model="editedUser.sonstigeaus" label="Sonstige Auszahlung"></v-text-field>
-            <v-btn type="submit" color="primary">Save Changes</v-btn>
+            <v-text-field v-model="editedUser.sonstigeaus" label="Sonstige Ausgaben"></v-text-field>
+            <v-btn type="submit" color="primary">Änderungen speichern</v-btn>
             <v-btn @click="cancelEdit" color="grey">Cancel</v-btn>
           </v-form>
         </v-card-text>

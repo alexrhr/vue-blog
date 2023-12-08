@@ -21,7 +21,7 @@ async function loadUsers() {
       id: doc.id,
       name: userData.name,
       balance: userData.balance,
-      verhaelt: userData.verhaelt,
+      geburtstag: userData.geburtstag,
     };
   });
 }
@@ -32,7 +32,6 @@ function viewUserDetails(userId) {
 
 async function deleteUser(userId) {
   await deleteDoc(doc(db, 'benutzer', userId));
-  // Reload the user list after deletion
   await loadUsers();
 }
 </script>
@@ -45,14 +44,14 @@ async function deleteUser(userId) {
         <v-card>
           <v-card-title>{{ user.name }}</v-card-title>
           <v-card-subtitle>{{ user.balance }}</v-card-subtitle>
-          <v-card-text>{{ user.verhaelt }}</v-card-text>
+          <v-card-text>{{ user.geburtstag }}</v-card-text>
 
           <v-card-actions>
             <v-btn color="red-darken-4" variant="elevated" @click="deleteUser(user.id)">
-              Delete
+              Löschen
             </v-btn>
             <v-btn color="primary" variant="elevated" @click="viewUserDetails(user.id)">
-              View Details
+              Details
             </v-btn>
           </v-card-actions>
         </v-card>
