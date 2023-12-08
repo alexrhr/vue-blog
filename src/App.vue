@@ -28,29 +28,26 @@ const drawer = ref(true)
 
     <VBottomNavigation grow >
       <VBtn size="large" link to="/startseite">
-        <VIcon>mdi-note-plus</VIcon>
         Startseite
       </VBtn>
       <VBtn size="large" link to="/finanzen">
-        <VIcon>mdi-shape</VIcon>
         Finanzen
       </VBtn>
       <VBtn size="large" link to="/hinzufügen">
-        <VIcon>mdi-account-multiple</VIcon>
         Transaktionen hinzufügen
       </VBtn>
     </VBottomNavigation>
 
     <VNavigationDrawer mobile-breakpoint="sm" v-model="drawer" class="transparent">
       <VList>
-        <VListItem :prepend-icon="BlogIcon" link to="/startseite">
+        <VListItem  link to="/startseite">
           Startseite
         </VListItem>
-        <VListItem prepend-icon="mdi-shape" link to="/finanzen">
+        <VListItem  link to="/finanzen">
           Finanzen
         </VListItem>
-        <VListItem prepend-icon="mdi-account-multiple" link to="/hinzufügen">
-          Transaktionen hinzufügen
+        <VListItem  link to="/hinzufügen">
+          Aktualisieren
         </VListItem>
       </VList>
     </VNavigationDrawer>

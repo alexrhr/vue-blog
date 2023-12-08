@@ -7,6 +7,8 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const users = ref([]);
 const editedUser = ref(null);
+const withdrawDialog = ref(false);
+const withdrawalAmount = ref(0);
 
 onMounted(async () => {
   await loadUsers();
@@ -66,6 +68,26 @@ async function saveUserChanges() {
 function cancelEdit() {
   editedUser.value = null;
 }
+
+function openWithdrawDialog() {
+  withdrawDialog.value = true;
+}
+
+async function withdrawUser() {
+  if (editedUser.value && withdrawalAmount.value > 0) {
+    const userDoc = doc(db, 'benutzer', editedUser.value.id);
+    const newBalance = editedUser.value.balance - withdrawalAmount.value;
+
+    await updateDoc(userDoc, {
+      balance: newBalance,
+    });
+
+    await loadUsers();
+    editedUser.value = null;
+    withdrawDialog.value = false;
+  } else {
+  }
+}
 </script>
 
 <template>
@@ -84,6 +106,9 @@ function cancelEdit() {
             </v-btn>
             <v-btn color="green" variant="elevated" @click="editUser(user)">
               Aktualisieren
+            </v-btn>
+            <v-btn color="red" variant="elevated" @click="openWithdrawDialog">
+              Abheben
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -107,6 +132,19 @@ function cancelEdit() {
             <v-text-field v-model="editedUser.sonstigeaus" label="Sonstige Ausgaben"></v-text-field>
             <v-btn type="submit" color="primary">Änderungen speichern</v-btn>
             <v-btn @click="cancelEdit" color="grey">Abbrechen</v-btn>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-if="withdrawDialog" v-model="withdrawDialog" persistent>
+      <v-card>
+        <v-card-title>Abheben von {{ editedUser.name }}</v-card-title>
+        <v-card-text>
+          <v-form @submit.prevent="withdrawUser">
+            <v-text-field v-model="withdrawalAmount" label="Abhebebetrag"></v-text-field>
+            <v-btn type="submit" color="primary">Abheben</v-btn>
+            <v-btn @click="withdrawDialog = false" color="grey">Abbrechen</v-btn>
           </v-form>
         </v-card-text>
       </v-card>
