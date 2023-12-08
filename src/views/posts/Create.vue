@@ -70,7 +70,7 @@ function cancelEdit() {
 
 <template>
   <v-container>
-    <h1>User List</h1>
+    <h1>Personen Liste: </h1>
     <v-row>
       <v-col v-for="user in users" :key="user.id" sm="6" lg="4">
         <v-card>

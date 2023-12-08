@@ -35,8 +35,6 @@ async function loadUsers() {
   });
 }
 
-
-
 function viewUserDetails(user) {
   displayedUser.value = { ...user }; // Hier wird der Benutzer für die Anzeige kopiert
 }
@@ -44,9 +42,6 @@ function viewUserDetails(user) {
 function closeDialog() {
   displayedUser.value = null; // Schließe das Dialogfenster
 }
-
-
-
 
 async function deleteUser(userId) {
   await deleteDoc(doc(db, 'benutzer', userId));
@@ -56,7 +51,7 @@ async function deleteUser(userId) {
 
 <template>
   <v-container>
-    <h1>User List</h1>
+    <h1>Personen Liste: </h1>
     <v-row>
       <v-col v-for="user in users" :key="user.id" sm="6" lg="4">
         <v-card>
@@ -75,8 +70,6 @@ async function deleteUser(userId) {
         </v-card>
       </v-col>
     </v-row>
-
-    <!-- Dialogfenster für die Anzeige der Benutzerdaten -->
     <v-dialog v-if="displayedUser" v-model="displayedUser" persistent>
       <v-card>
         <v-card-title>Anzeige der Daten von {{ displayedUser.name }}</v-card-title>
@@ -119,3 +112,4 @@ async function deleteUser(userId) {
     </v-dialog>
   </v-container>
 </template>
+
