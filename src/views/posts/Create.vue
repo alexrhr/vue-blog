@@ -75,13 +75,10 @@ function cancelEdit() {
       <v-col v-for="user in users" :key="user.id" sm="6" lg="4">
         <v-card>
           <v-card-title>{{ user.name }}</v-card-title>
-          <v-card-subtitle>{{ user.balance }}</v-card-subtitle>
-          <v-card-text>{{ user.verhaelt }}</v-card-text>
+          <v-card-subtitle>Kontostand: {{ user.balance }}</v-card-subtitle>
+          <v-card-text>Geb. {{ user.geburtstag }}</v-card-text>
 
           <v-card-actions>
-            <v-btn color="red-darken-4" variant="elevated" @click="deleteUser(user.id)">
-              Löschen
-            </v-btn>
             <v-btn color="primary" variant="elevated" @click="viewUserDetails(user.id)">
               Ansehen
             </v-btn>

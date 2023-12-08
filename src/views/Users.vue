@@ -1,5 +1,5 @@
 <script setup>
-import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
+import {addDoc, collection, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 import { useRouter } from 'vue-router';
 import { onMounted, ref } from "vue";
 import db from '/src/views/db';
@@ -75,6 +75,35 @@ async function saveUser() {
   router.push('/');
 }
 
+function editUser(user) {
+  editedUser.value = { ...user };
+}
+
+async function saveUserChanges() {
+  if (editedUser.value) {
+    const userDoc = doc(db, 'benutzer', editedUser.value.id);
+    await updateDoc(userDoc, {
+      name: editedUser.value.name,
+      balance: editedUser.value.balance,
+      verhaelt: editedUser.value.verhaelt,
+      geburtstag: editedUser.value.geburtstag,
+      aktiendepot: editedUser.value.aktiendepot,
+      debt: editedUser.value.debt,
+      Gehalt: editedUser.value.gehalt,
+      sonstigeein: editedUser.value.sonstigeein,
+      ratenzahlung: editedUser.value.ratenzahlung,
+      sonstigeaus: editedUser.value.sonstigeaus,
+    });
+
+    await loadUsers();
+    editedUser.value = null;
+  }
+}
+
+function cancelEdit() {
+  editedUser.value = null;
+}
+
 
 </script>
 
@@ -106,5 +135,27 @@ async function saveUser() {
         </v-sheet>
       </v-col>
     </v-row>
+
+    <v-dialog v-if="editedUser" v-model="editedUser" persistent>
+      <v-card>
+        <v-card-title>Edit User</v-card-title>
+        <v-card-text>
+          <v-form @submit.prevent="saveUserChanges">
+            <v-text-field v-model="editedUser.name" label="Name"></v-text-field>
+            <v-text-field v-model="editedUser.balance" label="Kontostand"></v-text-field>
+            <v-text-field v-model="editedUser.verhaelt" label="Verhältnis"></v-text-field>
+            <v-text-field v-model="editedUser.geburtstag" label="Geburtstag"></v-text-field>
+            <v-text-field v-model="editedUser.aktiendepot" label="Aktiendepot"></v-text-field>
+            <v-text-field v-model="editedUser.debt" label="Schulden"></v-text-field>
+            <v-text-field v-model="editedUser.gehalt" label="Gehalt"></v-text-field>
+            <v-text-field v-model="editedUser.sonstigeein" label="Sonstige Einzahlung"></v-text-field>
+            <v-text-field v-model="editedUser.ratenzahlung" label="Ratenzahlung"></v-text-field>
+            <v-text-field v-model="editedUser.sonstigeaus" label="Sonstige Ausgaben"></v-text-field>
+            <v-btn type="submit" color="primary">Änderungen speichern</v-btn>
+            <v-btn @click="cancelEdit" color="grey">Cancel</v-btn>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
