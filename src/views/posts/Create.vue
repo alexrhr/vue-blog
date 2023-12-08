@@ -36,9 +36,6 @@ async function loadUsers() {
   });
 }
 
-function viewUserDetails(userId) {
-  router.push(`/users/${userId}`);
-}
 
 function editUser(user) {
   editedUser.value = { ...user };
@@ -85,7 +82,6 @@ async function withdrawUser() {
     await loadUsers();
     editedUser.value = null;
     withdrawDialog.value = false;
-  } else {
   }
 }
 </script>
@@ -101,9 +97,7 @@ async function withdrawUser() {
           <v-card-text>Geb. {{ user.geburtstag }}</v-card-text>
 
           <v-card-actions>
-            <v-btn color="primary" variant="elevated" @click="viewUserDetails(user.id)">
-              Ansehen
-            </v-btn>
+
             <v-btn color="green" variant="elevated" @click="editUser(user)">
               Aktualisieren
             </v-btn>

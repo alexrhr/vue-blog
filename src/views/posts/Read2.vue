@@ -13,7 +13,6 @@ onMounted(async () => {
   await loadUser(props.id);
 });
 
-// Reagiere auf Änderungen in den Route-Parametern
 watch(() => router.currentRoute.params, async (toParams, previousParams) => {
   if (toParams.id !== previousParams.id) {
     // Lade Benutzerdaten erneut, wenn sich die Benutzer-ID ändert
@@ -40,9 +39,6 @@ async function loadUser(userId) {
       ratenzahlung: userData.ratenzahlung,
       sonstigeaus: userData.sonstigeaus,
     };
-  } else {
-    // Das Dokument mit der angegebenen Benutzer-ID wurde nicht gefunden.
-    console.log(`Benutzer mit ID ${userId} wurde nicht gefunden.`);
   }
 }
 </script>
@@ -80,13 +76,13 @@ async function loadUser(userId) {
                 <strong>Gehalt:</strong> {{ user.Gehalt }}
               </div>
               <div>
-                <strong>Sonstige Einzahlung:</strong> {{ user.sonstigeein }}
+                <strong>Sonstige Einnahmen:</strong> {{ user.sonstigeein }}
               </div>
               <div>
                 <strong>Ratenzahlung:</strong> {{ user.ratenzahlung }}
               </div>
               <div>
-                <strong>Sonstige Auszahlung:</strong> {{ user.sonstigeaus }}
+                <strong>Sonstige Ausgaben:</strong> {{ user.sonstigeaus }}
               </div>
             </v-card-text>
 
