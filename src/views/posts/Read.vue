@@ -26,9 +26,24 @@ async function loadUsers() {
   });
 }
 
-function viewUserDetails(userId) {
+/*function viewUserDetails(userId) {
   router.push(`/users/${userId}`);
+}*/
+
+function viewUserDetails(userId) {
+  router.push({ path: `/users/${userId}` });
 }
+
+function viewUserDetails2(userId) {
+  // Debugging: Logge die Benutzer-ID und den generierten Pfad
+  console.log('Benutzer-ID:', userId);
+  const path = `/users/${userId}`;
+  console.log('Generierter Pfad:', path);
+
+  // Versuche, zur Route zu navigieren
+  router.push({ path });
+}
+
 
 async function deleteUser(userId) {
   await deleteDoc(doc(db, 'benutzer', userId));
@@ -51,7 +66,7 @@ async function deleteUser(userId) {
               Löschen
             </v-btn>
             <v-btn color="primary" variant="elevated" @click="viewUserDetails(user.id)">
-              Details
+              Ansehen
             </v-btn>
           </v-card-actions>
         </v-card>

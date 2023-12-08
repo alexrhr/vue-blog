@@ -8,8 +8,8 @@ import Create from "@/views/posts/Create.vue";
 const routes = [
   {path: '/startseite', component: Overview},
   {path: '/', component: Overview},
-  {path: '/posts/:id', component: Read},
-  {path: '/users/:id', component: Read2, meta: { requiresAuth: true } },
+  //{path: '/posts/:id', component: Read},
+  {path: '/users/:id', component: Read2},
   {path: '/hinzufügen', component: Create},
   {path: '/posts/update', component: Overview},
   {path: '/posts/save', component: Overview},

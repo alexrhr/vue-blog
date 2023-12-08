@@ -115,7 +115,7 @@ function cancelEdit() {
         <v-sheet class="pa-3" elevation="4">
           <v-form @submit.prevent="saveUser">
             <v-text-field label="Name" variant="outlined" required v-model="name" placeholder="Name der neuen Person"/>
-            <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Geburtstag der Person"/>
+            <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Geburtstag bitte im Format 00-00-0000"/>
             <v-text-field label="Verhältnis" variant="outlined" v-model="verhaelt" placeholder="Verhältnis zum Benutzer"/>
             <v-text-field label="Kontostand" variant="outlined" type="number" v-model="balance" placeholder="Kontostand"/>
             <v-text-field label="Aktiendepot" variant="outlined" type="number" v-model="aktiendepot" placeholder="Aktueller Wert des Aktiendebots"/>
@@ -138,7 +138,7 @@ function cancelEdit() {
 
     <v-dialog v-if="editedUser" v-model="editedUser" persistent>
       <v-card>
-        <v-card-title>Edit User</v-card-title>
+        <v-card-title>Aktualisierung von {{user.name}}</v-card-title>
         <v-card-text>
           <v-form @submit.prevent="saveUserChanges">
             <v-text-field v-model="editedUser.name" label="Name"></v-text-field>
@@ -152,7 +152,7 @@ function cancelEdit() {
             <v-text-field v-model="editedUser.ratenzahlung" label="Ratenzahlung"></v-text-field>
             <v-text-field v-model="editedUser.sonstigeaus" label="Sonstige Ausgaben"></v-text-field>
             <v-btn type="submit" color="primary">Änderungen speichern</v-btn>
-            <v-btn @click="cancelEdit" color="grey">Cancel</v-btn>
+            <v-btn @click="cancelEdit" color="grey">Abbrechen</v-btn>
           </v-form>
         </v-card-text>
       </v-card>

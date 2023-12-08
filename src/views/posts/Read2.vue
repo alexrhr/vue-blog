@@ -1,47 +1,54 @@
 <script setup>
-import { doc, getDoc, deleteDoc } from 'firebase/firestore';
-import db from '/src/views/db';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { doc, getDoc } from 'firebase/firestore';
+import db from '/src/views/db';
 
 const props = defineProps(['id']);
 const router = useRouter();
 
-// Vue variables
 const user = ref({});
 
-onMounted(async () => await loadUser(props.id));
+onMounted(async () => {
+  await loadUser(props.id);
+});
 
-// load the user from Firestore, using its ID
-async function loadUser(id) {
-  const userDoc = await getDoc(doc(db, 'benutzer', id));
+// Reagiere auf Änderungen in den Route-Parametern
+watch(() => router.currentRoute.params, async (toParams, previousParams) => {
+  if (toParams.id !== previousParams.id) {
+    // Lade Benutzerdaten erneut, wenn sich die Benutzer-ID ändert
+    await loadUser(toParams.id);
+  }
+});
 
-  if (userDoc.exists()) {
+async function loadUser(userId) {
+  const userDocRef = doc(db, 'benutzer', userId);
+  const userDocSnapshot = await getDoc(userDocRef);
+
+  if (userDocSnapshot.exists()) {
+    const userData = userDocSnapshot.data();
     user.value = {
-      name: userDoc.data().name,
-      geburtstag: userDoc.data().geburtstag,
-      verhaelt: userDoc.data().verhaelt,
-      balance: userDoc.data().balance,
-      aktiendepot: userDoc.data().aktiendepot,
-      debt: userDoc.data().debt,
-      Gehalt: userDoc.data().Gehalt,
-      sonstigeein: userDoc.data().sonstigeein,
-      ratenzahlung: userDoc.data().ratenzahlung,
-      sonstigeaus: userDoc.data().sonstigeaus,
+      id: userDocSnapshot.id,
+      name: userData.name,
+      balance: userData.balance,
+      geburtstag: userData.geburtstag,
+      verhaelt: userData.verhaelt,
+      aktiendepot: userData.aktiendepot,
+      debt: userData.debt,
+      Gehalt: userData.Gehalt,
+      sonstigeein: userData.sonstigeein,
+      ratenzahlung: userData.ratenzahlung,
+      sonstigeaus: userData.sonstigeaus,
     };
   } else {
-    // if user with this ID doesn't exist, show a warning
-    user.value = { name: 'No entry with user id ' + props.id };
+    // Das Dokument mit der angegebenen Benutzer-ID wurde nicht gefunden.
+    console.log(`Benutzer mit ID ${userId} wurde nicht gefunden.`);
   }
 }
-
-// delete the user from Firestore, using its ID
-async function deleteUser(id) {
-  await deleteDoc(doc(db, 'benutzer', id));
-  // forward to overview page
-  router.push('/users');
-}
 </script>
+
+
+
 
 <template>
   <v-container>
@@ -58,16 +65,16 @@ async function deleteUser(id) {
                 <strong>Geburtstag:</strong> {{ user.geburtstag }}
               </div>
               <div>
-                <strong>Verhaelt:</strong> {{ user.verhaelt }}
+                <strong>Verhältnis zum Benutzer:</strong> {{ user.verhaelt }}
               </div>
               <div>
-                <strong>Balance:</strong> {{ user.balance }}
+                <strong>Kontostand:</strong> {{ user.balance }}
               </div>
               <div>
                 <strong>Aktiendepot:</strong> {{ user.aktiendepot }}
               </div>
               <div>
-                <strong>Debt:</strong> {{ user.debt }}
+                <strong>Schulden:</strong> {{ user.debt }}
               </div>
               <div>
                 <strong>Gehalt:</strong> {{ user.Gehalt }}
@@ -84,14 +91,9 @@ async function deleteUser(id) {
             </v-card-text>
 
             <v-card-actions>
-              <v-btn @click="deleteUser(props.id)" color="red darken-4" variant="elevated">
-                Delete User
-              </v-btn>
-              <v-btn color="primary" variant="elevated" link :to="'/users/edit/' + props.id">
-                Edit User
-              </v-btn>
+
               <v-btn color="grey darken-1" variant="elevated" link to="/users">
-                Close
+                Abbrechen
               </v-btn>
             </v-card-actions>
           </v-card>
