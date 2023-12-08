@@ -23,6 +23,13 @@ async function loadUsers() {
       name: userData.name,
       balance: userData.balance,
       verhaelt: userData.verhaelt,
+      geburtstag: userData.geburtstag,
+      aktiendepot: userData.aktiendepot,
+      debt: userData.debt,
+      gehalt: userData.Gehalt,
+      sonstigeein: userData.sonstigeein,
+      ratenzahlung: userData.ratenzahlung,
+      sonstigeaus: userData.sonstigeaus,
     };
   });
 }
@@ -42,6 +49,13 @@ async function saveUserChanges() {
       name: editedUser.value.name,
       balance: editedUser.value.balance,
       verhaelt: editedUser.value.verhaelt,
+      geburtstag: editedUser.value.geburtstag,
+      aktiendepot: editedUser.value.aktiendepot,
+      debt: editedUser.value.debt,
+      Gehalt: editedUser.value.gehalt,
+      sonstigeein: editedUser.value.sonstigeein,
+      ratenzahlung: editedUser.value.ratenzahlung,
+      sonstigeaus: editedUser.value.sonstigeaus,
     });
     // Reload the user list after updating
     await loadUsers();
@@ -88,6 +102,13 @@ function cancelEdit() {
             <v-text-field v-model="editedUser.name" label="Name"></v-text-field>
             <v-text-field v-model="editedUser.balance" label="Balance"></v-text-field>
             <v-text-field v-model="editedUser.verhaelt" label="Verhaelt"></v-text-field>
+            <v-text-field v-model="editedUser.geburtstag" label="Geburtstag"></v-text-field>
+            <v-text-field v-model="editedUser.aktiendepot" label="Aktiendepot"></v-text-field>
+            <v-text-field v-model="editedUser.debt" label="Debt"></v-text-field>
+            <v-text-field v-model="editedUser.gehalt" label="Gehalt"></v-text-field>
+            <v-text-field v-model="editedUser.sonstigeein" label="Sonstige Einzahlung"></v-text-field>
+            <v-text-field v-model="editedUser.ratenzahlung" label="Ratenzahlung"></v-text-field>
+            <v-text-field v-model="editedUser.sonstigeaus" label="Sonstige Auszahlung"></v-text-field>
             <v-btn type="submit" color="primary">Save Changes</v-btn>
             <v-btn @click="cancelEdit" color="grey">Cancel</v-btn>
           </v-form>

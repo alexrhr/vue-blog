@@ -15,6 +15,7 @@ const routes = [
   {path: '/posts/save', component: Overview},
   {path: '/posts/delete', component: Overview},
   {path: '/categories', component: Categories},
-  {path: '/finanzen', component: Users},
+  {path: '/finanzen', component: Read},
+  {path: '/posts/create', component: Users},
 ];
 export default routes;

@@ -67,4 +67,25 @@ const drawer = ref(true)
   </VLayout>
 </template>
 
+<style scoped>
+.headline {
+  font-size: 3em;
+  color: #3498db;
+}
+v-list-item-title{
+  font-size: 2em;
+  color: #030303;
+  line-height: 1.6;
+}
+v-card-text{
+  font-size: 2em;
+  color: #030303;
+  line-height: 1.6;
+}
+p {
+  font-size: 1em;
+  color: #8d8d8d;
+  line-height: 1.6;
+}
+</style>
 
