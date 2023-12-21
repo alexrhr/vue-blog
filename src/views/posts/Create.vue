@@ -1,14 +1,20 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
+import {onMounted, ref} from 'vue';
+import {collection, doc, getDocs, updateDoc} from 'firebase/firestore';
 import db from '/src/views/db';
-import { useRouter } from 'vue-router';
 
-const router = useRouter();
 const users = ref([]);
 const editedUser = ref(null);
 const withdrawDialog = ref(false);
 const withdrawalAmount = ref(0);
+
+// dialog visibility
+const isActive = ref()
+
+// validation rules
+const isValid = ref()
+const nameRules = [(value) => value?.trim() ? true : 'Bitte geben Sie den Namen ein']
+const accountRules = [(value) => value ? true : 'Bitte geben Sie den Kontostand ein']
 
 onMounted(async () => {
   await loadUsers();
@@ -38,10 +44,13 @@ async function loadUsers() {
 
 
 function editUser(user) {
-  editedUser.value = { ...user };
+  editedUser.value = {...user};
 }
 
 async function saveUserChanges() {
+  // if there is a validation error, abort
+  if (!isValid.value) return false
+
   if (editedUser.value) {
     const userDoc = doc(db, 'benutzer', editedUser.value.id);
     await updateDoc(userDoc, {
@@ -98,9 +107,58 @@ async function withdrawUser() {
 
           <v-card-actions>
 
-            <v-btn color="green" variant="elevated" @click="editUser(user)">
-              Aktualisieren
-            </v-btn>
+            <v-dialog persistent width="auto" max-width="600">
+              <template v-slot:activator="{ props }">
+                <v-btn color="green" variant="elevated"
+                       v-bind="props" @click="editUser(user)">
+                  Aktualisieren
+                </v-btn>
+              </template>
+
+              <template v-slot:default="{ isActive }">
+                <v-card>
+                  <v-card-title>Aktualisierung der Daten von {{ editedUser.name }}</v-card-title>
+                  <v-card-text>
+                    <v-form @submit.prevent="saveUserChanges" v-model="isValid">
+                      <v-row>
+                        <v-col>
+                          <v-text-field v-model="editedUser.name" label="Name"
+                                        :rules="nameRules" density="compact"/>
+                          <v-text-field v-model="editedUser.balance" label="Kontostand"
+                                        type="number" :rules="accountRules" density="compact"/>
+                          <v-text-field v-model="editedUser.verhaelt" label="Verhältnis" density="compact"/>
+                          <v-text-field v-model="editedUser.geburtstag" label="Geburtstag"
+                                        type="date" density="compact"/>
+                        </v-col>
+                        <v-col>
+                          <v-text-field v-model="editedUser.aktiendepot" label="Aktiendepot" density="compact"
+                                        type="number" min="0" step="1" max="999_999_999"/>
+                          <v-text-field v-model="editedUser.debt" label="Schulden"
+                                        type="number" density="compact"/>
+                          <v-text-field v-model="editedUser.gehalt" label="Gehalt"
+                                        type="number" density="compact"/>
+                          <v-text-field v-model="editedUser.sonstigeein" label="Sonstige Einzahlung"
+                                        type="number" density="compact"/>
+                          <v-text-field v-model="editedUser.ratenzahlung" label="Ratenzahlung"
+                                        type="number" density="compact"/>
+                          <v-text-field v-model="editedUser.sonstigeaus" label="Sonstige Ausgaben"
+                                        type="number" density="compact"/>
+                        </v-col>
+                      </v-row>
+                    </v-form>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn @click="isActive.value = false"
+                           variant="elevated" color="grey">Abbrechen
+                    </v-btn>
+                    <v-col class="text-right">
+                      <v-btn type="submit" variant="elevated" color="primary">Speichern</v-btn>
+                    </v-col>
+                  </v-card-actions>
+                </v-card>
+              </template>
+            </v-dialog>
+
             <v-btn color="red" variant="elevated" @click="openWithdrawDialog">
               Abheben
             </v-btn>
@@ -109,31 +167,10 @@ async function withdrawUser() {
       </v-col>
     </v-row>
 
-    <v-dialog v-if="editedUser" v-model="editedUser" persistent>
-      <v-card>
-        <v-card-title>Aktualisierung der Daten von {{editedUser.name}}</v-card-title>
-        <v-card-text>
-          <v-form @submit.prevent="saveUserChanges">
-            <v-text-field v-model="editedUser.name" label="Name"></v-text-field>
-            <v-text-field v-model="editedUser.balance" label="Kontostand"></v-text-field>
-            <v-text-field v-model="editedUser.verhaelt" label="Verhältnis"></v-text-field>
-            <v-text-field v-model="editedUser.geburtstag" label="Geburtstag" placeholder="Bitte im Format 00-00-0000"></v-text-field>
-            <v-text-field v-model="editedUser.aktiendepot" label="Aktiendepot"></v-text-field>
-            <v-text-field v-model="editedUser.debt" label="Schulden"></v-text-field>
-            <v-text-field v-model="editedUser.gehalt" label="Gehalt"></v-text-field>
-            <v-text-field v-model="editedUser.sonstigeein" label="Sonstige Einzahlung"></v-text-field>
-            <v-text-field v-model="editedUser.ratenzahlung" label="Ratenzahlung"></v-text-field>
-            <v-text-field v-model="editedUser.sonstigeaus" label="Sonstige Ausgaben"></v-text-field>
-            <v-btn type="submit" color="primary">Änderungen speichern</v-btn>
-            <v-btn @click="cancelEdit" color="grey">Abbrechen</v-btn>
-          </v-form>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
 
     <v-dialog v-if="withdrawDialog" v-model="withdrawDialog" persistent>
       <v-card>
-        <v-card-title>Abheben von {{ editedUser.name }}</v-card-title>
+        <v-card-title>Abheben von {{ editedUser?.name }}</v-card-title>
         <v-card-text>
           <v-form @submit.prevent="withdrawUser">
             <v-text-field v-model="withdrawalAmount" label="Abhebebetrag"></v-text-field>
