@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, ref} from 'vue';
 import {collection, doc, getDocs, updateDoc} from 'firebase/firestore';
-import db from '/src/views/db';
+import db from '/src/db';
 
 const users = ref([]);
 const editedUser = ref(null);
@@ -133,6 +133,7 @@ async function withdrawUser() {
                         <v-col>
                           <v-text-field v-model="editedUser.aktiendepot" label="Aktiendepot" density="compact"
                                         type="number" min="0" step="1" max="999_999_999"/>
+                          <v-card-title>Abheben von {{ editedUser?.name }}</v-card-title>
                           <v-text-field v-model="editedUser.debt" label="Schulden"
                                         type="number" density="compact"/>
                           <v-text-field v-model="editedUser.gehalt" label="Gehalt"

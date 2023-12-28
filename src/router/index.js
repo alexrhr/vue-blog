@@ -1,15 +1,14 @@
-import Overview from "@/views/posts/Overview.vue";
-import Users from "@/views/Users.vue";
-import Read from "@/views/posts/Read.vue";
-import Read2 from "@/views/posts/Read2.vue";
-import Create from "@/views/posts/Create.vue";
+import Create from "@/views/budget/Create.vue";
+import LandingPage from "@/views/budget/LandingPage.vue";
+import Details from "@/views/budget/Details.vue";
+import EditUser from "@/views/EditUser.vue";
 
 const routes = [
-  {path: '/startseite', component: Overview},
-  {path: '/', component: Overview},
-  {path: '/users/:id', component: Read2},
+  {path: '/startseite', component: LandingPage},
+  {path: '/', component: LandingPage},
+  {path: '/users/:id', component: Details},
   {path: '/hinzufügen', component: Create},
-  {path: '/finanzen', component: Read},
-  {path: '/posts/create', component: Users},
+  {path: '/finanzen', component: Details},
+  {path: '/budget/create', component: EditUser},
 ];
 export default routes;

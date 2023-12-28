@@ -2,7 +2,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { doc, getDoc } from 'firebase/firestore';
-import db from '/src/views/db';
+import db from '/src/db';
 
 const props = defineProps(['id']);
 const router = useRouter();
@@ -21,7 +21,7 @@ watch(() => router.currentRoute.params, async (toParams, previousParams) => {
 });
 
 async function loadUser(userId) {
-  const userDocRef = doc(db, 'benutzer', userId);
+  const userDocRef = doc(db, 'finanzen', userId);
   const userDocSnapshot = await getDoc(userDocRef);
 
   if (userDocSnapshot.exists()) {
