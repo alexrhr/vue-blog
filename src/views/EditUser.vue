@@ -21,7 +21,6 @@ const sonstigeein = ref(0);
 const ratenzahlung = ref(0);
 const sonstigeaus = ref(0);
 
-
 onMounted(async () => {
   // only execute for an existing user
   if (props.id) await loadUser(props.id);
@@ -57,12 +56,14 @@ async function saveUser() {
   } else {
     nameError.value = false;
   }
+
   if (!verhaelt.value.trim()) {
     verError.value = true;
     return;
   } else {
     verError.value = false;
   }
+
   const userRef = collection(db, "benutzer");
   const newUserData = {
     name: name.value,
@@ -82,11 +83,8 @@ async function saveUser() {
   } else {
     await setDoc(doc(userRef, props.id), newUserData);
   }
-
-
   router.push('/');
 }
-
 
 const validateGeburtstag = (v) => {
   const regeln = /^(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-(\d{4})$/;
@@ -101,26 +99,15 @@ const validateGeburtstag = (v) => {
   return true;
 };
 
-
 const PositiveNummer = (v) => {
-  // Überprüfe, ob es sich um eine positive Zahl handelt
   if (parseFloat(v) <= 0) {
     return 'Die Zahl muss positiv sein.';
   }
-
-  // Überprüfe, ob die Zahl maximal zwei Nachkommastellen hat
   if (!/^\d+(\.\d{1,2})?$/.test(v)) {
     return 'Die Zahl darf maximal zwei Nachkommastellen haben.';
   }
-
   return true;
 };
-
-
-function cancelEdit() {
-  editedUser.value = null;
-}
-
 
 </script>
 
@@ -156,11 +143,8 @@ function cancelEdit() {
             <v-btn size="large" elevation="4" color="grey darken-1" @click="router.push('/users')">Abbrechen</v-btn>
             <v-btn type="submit" size="large" elevation="4" color="primary" class="float-end">Speichern</v-btn>
           </v-form>
-
         </v-sheet>
       </v-col>
     </v-row>
-
-
   </v-container>
 </template>
