@@ -1,5 +1,5 @@
 <script setup>
-import {addDoc, collection, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
+import {query, where, addDoc, collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { useRouter } from 'vue-router';
 import { onMounted, ref } from "vue";
 import db from '/src/views/db';
@@ -109,6 +109,18 @@ const PositiveNummer = (v) => {
   return true;
 };
 
+const einzigartigerName = async (v) => {
+  const Ref = collection(db, "benutzer");
+  const q = query(Ref, where('name', '==', v));
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.size > 0) {
+    return 'Dieser Name ist bereits vergeben. Bitte wähle einen anderen.';
+  }
+
+  return true;
+};
+
 </script>
 
 <template>
@@ -123,7 +135,7 @@ const PositiveNummer = (v) => {
                 <v-alert type="error">Name is required.</v-alert>
               </v-col>
             </v-row>
-            <v-text-field label="Name" variant="outlined" required v-model="name" placeholder="Name der neuen Person" :error="nameError"/>
+            <v-text-field label="Name" variant="outlined" required v-model="name" placeholder="Name der neuen Person" :error="nameError" :rules="[einzigartigerName]"/>
             <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Geburtstag bitte im Format 00-00-0000" :rules="[validateGeburtstag]"/>
             <v-row v-if="verError">
               <v-col>
@@ -136,7 +148,7 @@ const PositiveNummer = (v) => {
             <v-text-field label="Schulden" variant="outlined" type="number" v-model="debt" placeholder="Schulden der Person" :rules="[PositiveNummer]"/>
             <v-text-field label="Gehalt" variant="outlined" type="number" v-model="Gehalt" placeholder="Gehalt der Person" :rules="[PositiveNummer]"/>
             <v-text-field label="Sonstige Einnahmen" variant="outlined" type="number" v-model="sonstigeein" placeholder="Sonstige Einnahmen" :rules="[PositiveNummer]"/>
-            <v-text-field label="Ratenzahlung" variant="outlined" type="number" v-model="ratenzahlung" placeholder="Falls Schulden vorhanden was sind die Ratenzahlungen" :rules="[PositiveNummer]"/>
+            <v-text-field label="Ratenzahlung" variant="outlined" type="number" v-model="ratenzahlung" placeholder="Falls Schulden vorhanden was sind die Ratenzahlungen" :rules="[PositiveNummer]" />
             <v-text-field label="Sonstige Ausgaben" variant="outlined" type="number" v-model="sonstigeaus" placeholder="Andere Ausgaben" :rules="[PositiveNummer]"/>
 
             <v-spacer class="mt-4"/>
