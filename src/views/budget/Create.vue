@@ -58,14 +58,12 @@ function editUser(user) {
   }
 }*/
 
-async function deletePost(id) {
-  await deleteDoc(doc(db, "benutzer", id))
-  // forward to overview page
-  router.push('/finanzen')
+async function deleteUser(id) {
+  await deleteDoc(doc(db, "benutzer", id));
+  await loadUsers();
 }
 
 async function saveUserChanges() {
-  // if there is a validation error, abort
   if (!isValid.value) return false
 
   if (editedUser.value) {
@@ -88,9 +86,7 @@ async function saveUserChanges() {
   }
 }
 
-function cancelEdit() {
-  editedUser.value = null;
-}
+
 
 function openWithdrawDialog() {
   withdrawDialog.value = true;
@@ -196,35 +192,32 @@ async function withdrawUser() {
                       Abbrechen
                     </v-btn>
                     <v-btn variant="elevated" color="red-darken-4"
-                           @click="deletePost(props.id)">
+                           @click="deleteUser(user.id)">
                       Yes, delete
                     </v-btn>
                   </v-card-actions>
                 </v-card>
               </template>
             </v-dialog>
-
-
+            <v-dialog width="auto" v-if="withdrawDialog" v-model="withdrawDialog" persistent>
+              <v-card>
+                <v-card-title>Abheben von {{ user.name }}</v-card-title>
+                <v-card-text>
+                  <v-form @submit.prevent="withdrawUser">
+                    <v-text-field v-model="withdrawalAmount" label="Abhebebetrag"></v-text-field>
+                    <v-btn @click="withdrawDialog = false" color="grey">Abbrechen</v-btn>
+                    <v-btn type="submit" color="primary">Abheben</v-btn>
+                  </v-form>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
             <v-btn color="red" variant="elevated" @click="openWithdrawDialog">
               Abheben
             </v-btn>
+
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
-
-
-    <v-dialog v-if="withdrawDialog" v-model="withdrawDialog" persistent>
-      <v-card>
-        <v-card-title>Abheben von {{ editedUser?.name }}</v-card-title>
-        <v-card-text>
-          <v-form @submit.prevent="withdrawUser">
-            <v-text-field v-model="withdrawalAmount" label="Abhebebetrag"></v-text-field>
-            <v-btn type="submit" color="primary">Abheben</v-btn>
-            <v-btn @click="withdrawDialog = false" color="grey">Abbrechen</v-btn>
-          </v-form>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
