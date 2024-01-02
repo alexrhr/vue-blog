@@ -34,7 +34,7 @@ const drawer = ref(true)
         Finanzen
       </VBtn>
       <VBtn size="large" link to="/hinzufügen">
-        Transaktionen hinzufügen
+        Aktualisieren
       </VBtn>
     </VBottomNavigation>
 

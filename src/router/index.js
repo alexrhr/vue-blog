@@ -10,5 +10,6 @@ const routes = [
   {path: '/hinzufügen', component: Create},
   {path: '/finanzen', component: Details},
   {path: '/budget/create', component: EditUser},
+  {path: '/posts/create', component: EditUser},
 ];
 export default routes;

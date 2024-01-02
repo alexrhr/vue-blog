@@ -1,8 +1,11 @@
 <script setup>
 import {onMounted, ref} from 'vue';
-import {collection, doc, getDocs, updateDoc} from 'firebase/firestore';
-import db from '/src/db';
+import {collection, doc, getDocs, deleteDoc, updateDoc} from 'firebase/firestore';
+import db from '/src/views/db';
+import {useRouter} from "vue-router";
 
+const props = defineProps(['id'])
+const router = useRouter()
 const users = ref([]);
 const editedUser = ref(null);
 const withdrawDialog = ref(false);
@@ -45,6 +48,20 @@ async function loadUsers() {
 
 function editUser(user) {
   editedUser.value = {...user};
+}
+
+/*async function deleteUser() {
+  if (editedUser.value && editedUser.value.id) {
+    await deleteDoc(doc(db, 'benutzer', editedUser.value.id));
+    // Refresh the user list after deletion
+    await loadUsers();
+  }
+}*/
+
+async function deletePost(id) {
+  await deleteDoc(doc(db, "benutzer", id))
+  // forward to overview page
+  router.push('/finanzen')
 }
 
 async function saveUserChanges() {
@@ -149,8 +166,8 @@ async function withdrawUser() {
                     </v-form>
                   </v-card-text>
                   <v-card-actions>
-                    <v-btn @click="isActive.value = false"
-                           variant="elevated" color="grey">Abbrechen
+                    <v-btn @click="isActive && (isActive.value = false)" variant="elevated" color="grey">
+                      Abbrechen
                     </v-btn>
                     <v-col class="text-right">
                       <v-btn type="submit" variant="elevated" color="primary">Speichern</v-btn>
@@ -159,6 +176,34 @@ async function withdrawUser() {
                 </v-card>
               </template>
             </v-dialog>
+
+
+            <v-dialog width="auto">
+              <template v-slot:activator="{ props }">
+                <v-btn color="red-darken-4" variant="elevated" v-bind="props">Delete</v-btn>
+              </template>
+              <template v-slot:default="{ isActive }">
+                <v-card>
+                  <v-toolbar color="red-darken-4" title="Delete posting"/>
+                  <v-card-text>
+                    <div class="text-h4 pa-8">
+                      Are you sure that you<br/> want to delete this post?
+                    </div>
+                  </v-card-text>
+                  <v-card-actions class="justify-space-between">
+                    <v-btn variant="elevated" color="grey-darken-1"
+                           @click="isActive.value = false">
+                      Abbrechen
+                    </v-btn>
+                    <v-btn variant="elevated" color="red-darken-4"
+                           @click="deletePost(props.id)">
+                      Yes, delete
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </template>
+            </v-dialog>
+
 
             <v-btn color="red" variant="elevated" @click="openWithdrawDialog">
               Abheben

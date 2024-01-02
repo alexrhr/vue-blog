@@ -2,8 +2,9 @@
 import {addDoc, collection, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 import { useRouter } from 'vue-router';
 import { onMounted, ref } from "vue";
-import db from '/src/db';
+import db from '/src/views/db';
 
+const nameError = ref(false);
 const props = defineProps(['id']);
 const router = useRouter();
 
@@ -51,6 +52,12 @@ async function loadUser(id) {
 }
 
 async function saveUser() {
+  if (!name.value.trim()) {
+    nameError.value = true;
+    return;
+  } else {
+    nameError.value = false;
+  }
   const userRef = collection(db, "benutzer");
   const newUserData = {
     name: name.value,
@@ -114,7 +121,12 @@ function cancelEdit() {
       <v-col sm="8" lg="4">
         <v-sheet class="pa-3" elevation="4">
           <v-form @submit.prevent="saveUser">
-            <v-text-field label="Name" variant="outlined" required v-model="name" placeholder="Name der neuen Person"/>
+            <v-row v-if="nameError">
+              <v-col>
+                <v-alert type="error">Name is required.</v-alert>
+              </v-col>
+            </v-row>
+            <v-text-field label="Name" variant="outlined" required v-model="name" placeholder="Name der neuen Person" :error="nameError"/>
             <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Geburtstag bitte im Format 00-00-0000"/>
             <v-text-field label="Verhältnis" variant="outlined" v-model="verhaelt" placeholder="Verhältnis zum Benutzer"/>
             <v-text-field label="Kontostand" variant="outlined" type="number" v-model="balance" placeholder="Kontostand"/>
@@ -128,8 +140,8 @@ function cancelEdit() {
             <v-text-field label="Withdrawal Amount" variant="outlined" type="number" v-model="withdrawalAmount" placeholder="Wieviel möchten sie abbuchen"/>
 
             <v-spacer class="mt-4"/>
-            <v-btn size="large" elevation="4" color="grey darken-1" @click="router.push('/users')">Cancel</v-btn>
-            <v-btn type="submit" size="large" elevation="4" color="primary" class="float-end">Save</v-btn>
+            <v-btn size="large" elevation="4" color="grey darken-1" @click="router.push('/users')">Abbrechen</v-btn>
+            <v-btn type="submit" size="large" elevation="4" color="primary" class="float-end">Speichern</v-btn>
           </v-form>
 
         </v-sheet>

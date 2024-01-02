@@ -2,7 +2,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { doc, getDoc } from 'firebase/firestore';
-import db from '/src/db';
+import db from '/src/views/db';
 
 const props = defineProps(['id']);
 const router = useRouter();
