@@ -5,6 +5,7 @@ import { onMounted, ref } from "vue";
 import db from '/src/views/db';
 
 const nameError = ref(false);
+const verError = ref(false);
 const props = defineProps(['id']);
 const router = useRouter();
 
@@ -20,8 +21,6 @@ const sonstigeein = ref(0);
 const ratenzahlung = ref(0);
 const sonstigeaus = ref(0);
 
-// New input field for withdrawal
-const withdrawalAmount = ref(0);
 
 onMounted(async () => {
   // only execute for an existing user
@@ -58,6 +57,12 @@ async function saveUser() {
   } else {
     nameError.value = false;
   }
+  if (!verhaelt.value.trim()) {
+    verError.value = true;
+    return;
+  } else {
+    verError.value = false;
+  }
   const userRef = collection(db, "benutzer");
   const newUserData = {
     name: name.value,
@@ -82,30 +87,35 @@ async function saveUser() {
   router.push('/');
 }
 
-function editUser(user) {
-  editedUser.value = { ...user };
-}
 
-async function saveUserChanges() {
-  if (editedUser.value) {
-    const userDoc = doc(db, 'benutzer', editedUser.value.id);
-    await updateDoc(userDoc, {
-      name: editedUser.value.name,
-      balance: editedUser.value.balance,
-      verhaelt: editedUser.value.verhaelt,
-      geburtstag: editedUser.value.geburtstag,
-      aktiendepot: editedUser.value.aktiendepot,
-      debt: editedUser.value.debt,
-      Gehalt: editedUser.value.gehalt,
-      sonstigeein: editedUser.value.sonstigeein,
-      ratenzahlung: editedUser.value.ratenzahlung,
-      sonstigeaus: editedUser.value.sonstigeaus,
-    });
+const validateGeburtstag = (v) => {
+  const regeln = /^(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-(\d{4})$/;
 
-    await loadUsers();
-    editedUser.value = null;
+  if (!regeln.test(v)) {
+    return 'Ungültiges Format. Verwenden Sie das Format DD-MM-YYYY.';
   }
-}
+  const [, day, month, year] = regeln.exec(v);
+  if (parseInt(day, 10) > 31 || parseInt(day, 10) < 1 || parseInt(month, 10) > 12 || parseInt(month, 10) < 1) {
+    return 'Ungültiges Datum.';
+  }
+  return true;
+};
+
+
+const PositiveNummer = (v) => {
+  // Überprüfe, ob es sich um eine positive Zahl handelt
+  if (parseFloat(v) <= 0) {
+    return 'Die Zahl muss positiv sein.';
+  }
+
+  // Überprüfe, ob die Zahl maximal zwei Nachkommastellen hat
+  if (!/^\d+(\.\d{1,2})?$/.test(v)) {
+    return 'Die Zahl darf maximal zwei Nachkommastellen haben.';
+  }
+
+  return true;
+};
+
 
 function cancelEdit() {
   editedUser.value = null;
@@ -127,17 +137,20 @@ function cancelEdit() {
               </v-col>
             </v-row>
             <v-text-field label="Name" variant="outlined" required v-model="name" placeholder="Name der neuen Person" :error="nameError"/>
-            <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Geburtstag bitte im Format 00-00-0000"/>
+            <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Geburtstag bitte im Format 00-00-0000" :rules="[validateGeburtstag]"/>
+            <v-row v-if="verError">
+              <v-col>
+                <v-alert type="error">Bitte geben sie das bestehende Verhältnis an.</v-alert>
+              </v-col>
+            </v-row>
             <v-text-field label="Verhältnis" variant="outlined" v-model="verhaelt" placeholder="Verhältnis zum Benutzer"/>
             <v-text-field label="Kontostand" variant="outlined" type="number" v-model="balance" placeholder="Kontostand"/>
-            <v-text-field label="Aktiendepot" variant="outlined" type="number" v-model="aktiendepot" placeholder="Aktueller Wert des Aktiendebots"/>
-            <v-text-field label="Schulden" variant="outlined" type="number" v-model="debt" placeholder="Schulden der Person"/>
-            <v-text-field label="Gehalt" variant="outlined" type="number" v-model="Gehalt" placeholder="Gehalt der Person"/>
-            <v-text-field label="Sonstige Einnahmen" variant="outlined" type="number" v-model="sonstigeein" placeholder="Sonstige Einnahmen"/>
-            <v-text-field label="Ratenzahlung" variant="outlined" type="number" v-model="ratenzahlung" placeholder="Falls Schulden vorhanden was sind die Ratenzahlungen"/>
-            <v-text-field label="Sonstige Ausgaben" variant="outlined" type="number" v-model="sonstigeaus" placeholder="Andere Ausgaben"/>
-
-            <v-text-field label="Withdrawal Amount" variant="outlined" type="number" v-model="withdrawalAmount" placeholder="Wieviel möchten sie abbuchen"/>
+            <v-text-field label="Aktiendepot" variant="outlined" type="number" v-model="aktiendepot" placeholder="Aktueller Wert des Aktiendebots" :rules="[PositiveNummer]"/>
+            <v-text-field label="Schulden" variant="outlined" type="number" v-model="debt" placeholder="Schulden der Person" :rules="[PositiveNummer]"/>
+            <v-text-field label="Gehalt" variant="outlined" type="number" v-model="Gehalt" placeholder="Gehalt der Person" :rules="[PositiveNummer]"/>
+            <v-text-field label="Sonstige Einnahmen" variant="outlined" type="number" v-model="sonstigeein" placeholder="Sonstige Einnahmen" :rules="[PositiveNummer]"/>
+            <v-text-field label="Ratenzahlung" variant="outlined" type="number" v-model="ratenzahlung" placeholder="Falls Schulden vorhanden was sind die Ratenzahlungen" :rules="[PositiveNummer]"/>
+            <v-text-field label="Sonstige Ausgaben" variant="outlined" type="number" v-model="sonstigeaus" placeholder="Andere Ausgaben" :rules="[PositiveNummer]"/>
 
             <v-spacer class="mt-4"/>
             <v-btn size="large" elevation="4" color="grey darken-1" @click="router.push('/users')">Abbrechen</v-btn>
@@ -148,26 +161,6 @@ function cancelEdit() {
       </v-col>
     </v-row>
 
-    <v-dialog v-if="editedUser" v-model="editedUser" persistent>
-      <v-card>
-        <v-card-title>Aktualisierung von {{user.name}}</v-card-title>
-        <v-card-text>
-          <v-form @submit.prevent="saveUserChanges">
-            <v-text-field v-model="editedUser.name" label="Name"></v-text-field>
-            <v-text-field v-model="editedUser.balance" label="Kontostand"></v-text-field>
-            <v-text-field v-model="editedUser.verhaelt" label="Verhältnis"></v-text-field>
-            <v-text-field v-model="editedUser.geburtstag" label="Geburtstag"></v-text-field>
-            <v-text-field v-model="editedUser.aktiendepot" label="Aktiendepot"></v-text-field>
-            <v-text-field v-model="editedUser.debt" label="Schulden"></v-text-field>
-            <v-text-field v-model="editedUser.gehalt" label="Gehalt"></v-text-field>
-            <v-text-field v-model="editedUser.sonstigeein" label="Sonstige Einzahlung"></v-text-field>
-            <v-text-field v-model="editedUser.ratenzahlung" label="Ratenzahlung"></v-text-field>
-            <v-text-field v-model="editedUser.sonstigeaus" label="Sonstige Ausgaben"></v-text-field>
-            <v-btn type="submit" color="primary">Änderungen speichern</v-btn>
-            <v-btn @click="cancelEdit" color="grey">Abbrechen</v-btn>
-          </v-form>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+
   </v-container>
 </template>
