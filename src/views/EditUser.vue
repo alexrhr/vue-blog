@@ -90,7 +90,7 @@ const validateGeburtstag = (v) => {
   const regeln = /^(0[1-9]|[1-2][0-9]|3[0-1]).(0[1-9]|1[0-2]).(\d{4})$/;
 
   if (!regeln.test(v)) {
-    return 'Ungültiges Format. Verwenden Sie das Format DD-MM-YYYY.';
+    return 'Ungültiges Format. Verwenden Sie das Format DD.MM.YYYY.';
   }
   const [, day, month, year] = regeln.exec(v);
   if (parseInt(day, 10) > 31 || parseInt(day, 10) < 1 || parseInt(month, 10) > 12 || parseInt(month, 10) < 1) {
@@ -124,10 +124,10 @@ const einzigartigerName = async (v) => {
 </script>
 
 <template>
-  <v-container>
+  <v-container >
     <h1>{{ isNewUser ? 'Benutzer hinzufügen' : `Edit '${name}'` }}</h1>
     <v-row>
-      <v-col sm="8" lg="4">
+      <v-col width="auto" sm="8" lg="4">
         <v-sheet class="pa-3" elevation="4">
           <v-form @submit.prevent="saveUser">
             <v-row v-if="nameError">

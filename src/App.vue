@@ -49,6 +49,9 @@ const drawer = ref(true)
         <VListItem  link to="/hinzufügen">
           Aktualisieren
         </VListItem>
+        <VListItem  link to="/posts/create">
+          Hinzufügen
+        </VListItem>
       </VList>
     </VNavigationDrawer>
 
