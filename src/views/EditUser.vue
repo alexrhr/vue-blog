@@ -87,7 +87,7 @@ async function saveUser() {
 }
 
 const validateGeburtstag = (v) => {
-  const regeln = /^(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-(\d{4})$/;
+  const regeln = /^(0[1-9]|[1-2][0-9]|3[0-1]).(0[1-9]|1[0-2]).(\d{4})$/;
 
   if (!regeln.test(v)) {
     return 'Ungültiges Format. Verwenden Sie das Format DD-MM-YYYY.';
@@ -136,7 +136,7 @@ const einzigartigerName = async (v) => {
               </v-col>
             </v-row>
             <v-text-field label="Name" variant="outlined" required v-model="name" placeholder="Name der neuen Person" :error="nameError" :rules="[einzigartigerName]"/>
-            <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Geburtstag bitte im Format 00-00-0000" :rules="[validateGeburtstag]"/>
+            <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Geburtstag bitte im Format 00.00.0000" :rules="[validateGeburtstag]"/>
             <v-row v-if="verError">
               <v-col>
                 <v-alert type="error">Bitte geben sie das bestehende Verhältnis an.</v-alert>

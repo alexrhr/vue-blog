@@ -11,10 +11,8 @@ const editedUser = ref(null);
 const withdrawDialog = ref(false);
 const withdrawalAmount = ref(0);
 
-// dialog visibility
 const isActive = ref()
 
-// validation rules
 const isValid = ref()
 const nameRules = [(value) => value?.trim() ? true : 'Bitte geben Sie den Namen ein']
 const accountRules = [(value) => value ? true : 'Bitte geben Sie den Kontostand ein']
@@ -50,13 +48,6 @@ function editUser(user) {
   editedUser.value = {...user};
 }
 
-/*async function deleteUser() {
-  if (editedUser.value && editedUser.value.id) {
-    await deleteDoc(doc(db, 'benutzer', editedUser.value.id));
-    // Refresh the user list after deletion
-    await loadUsers();
-  }
-}*/
 
 async function deleteUser(id) {
   await deleteDoc(doc(db, "benutzer", id));
@@ -64,9 +55,8 @@ async function deleteUser(id) {
 }
 
 async function saveUserChanges() {
-  if (!isValid.value) return false
-
-  if (editedUser.value) {
+  console.log("saveUserChanges called");
+  console.log("editedUser before update:", editedUser.value);  if (editedUser.value) {
     const userDoc = doc(db, 'benutzer', editedUser.value.id);
     await updateDoc(userDoc, {
       name: editedUser.value.name,
@@ -82,11 +72,19 @@ async function saveUserChanges() {
     });
 
     await loadUsers();
-    editedUser.value = null;
+  }  else {
+    console.error("editedUser is null in saveUserChanges");
   }
+
+  editedUser.value = null;
+
+  console.log("editedUser after update:", editedUser.value);
+  await  router.push('/');
 }
 
-
+function cancelEdit() {
+  editedUser.value = null;
+}
 
 function openWithdrawDialog() {
   withdrawDialog.value = true;
@@ -132,7 +130,7 @@ async function withdrawUser() {
                 <v-card>
                   <v-card-title>Aktualisierung der Daten von {{ editedUser.name }}</v-card-title>
                   <v-card-text>
-                    <v-form @submit.prevent="saveUserChanges" v-model="isValid">
+                    <v-form @submit.prevent="saveUserChanges" :model="isValid">
                       <v-row>
                         <v-col>
                           <v-text-field v-model="editedUser.name" label="Name"
@@ -166,7 +164,7 @@ async function withdrawUser() {
                       Abbrechen
                     </v-btn>
                     <v-col class="text-right">
-                      <v-btn type="submit" variant="elevated" color="primary">Speichern</v-btn>
+                      <v-btn type="submit" variant="elevated" color="primary" @click="saveUserChanges">Speichern </v-btn>
                     </v-col>
                   </v-card-actions>
                 </v-card>
