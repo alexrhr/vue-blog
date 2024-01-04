@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from 'vue';
+import {onMounted, ref, toRefs} from 'vue';
 import {collection, doc, getDocs, deleteDoc, updateDoc} from 'firebase/firestore';
 import db from '/src/views/db';
 import {useRouter} from "vue-router";
@@ -72,13 +72,8 @@ async function saveUserChanges() {
     });
 
     await loadUsers();
-  }  else {
-    console.error("editedUser is null in saveUserChanges");
   }
-
   editedUser.value = null;
-
-  console.log("editedUser after update:", editedUser.value);
   await  router.push('/');
 }
 
@@ -91,18 +86,37 @@ function openWithdrawDialog() {
 }
 
 async function withdrawUser() {
+
+  console.log("Withdraw called. editedUser:", editedUser.value, "withdrawalAmount:", withdrawalAmount.value);
+
   if (editedUser.value && withdrawalAmount.value > 0) {
     const userDoc = doc(db, 'benutzer', editedUser.value.id);
     const newBalance = editedUser.value.balance - withdrawalAmount.value;
+    //const userData = toRefs(editedUser.value);
 
     await updateDoc(userDoc, {
+      name: editedUser.value.name,
       balance: newBalance,
+      verhaelt: editedUser.value.verhaelt,
+      geburtstag: editedUser.value.geburtstag,
+      aktiendepot: editedUser.value.aktiendepot,
+      debt: editedUser.value.debt,
+      Gehalt: editedUser.value.gehalt,
+      sonstigeein: editedUser.value.sonstigeein,
+      ratenzahlung: editedUser.value.ratenzahlung,
+      sonstigeaus: editedUser.value.sonstigeaus,
     });
 
     await loadUsers();
     editedUser.value = null;
     withdrawDialog.value = false;
+    console.log("Withdraw successful. Navigating to /");
+  } else {
+    console.error("Withdraw failed. User or withdrawalAmount is invalid.");
   }
+
+    await router.push('/');
+
 }
 </script>
 
@@ -197,21 +211,22 @@ async function withdrawUser() {
                 </v-card>
               </template>
             </v-dialog>
+            <v-btn color="red" variant="elevated" @click="() => { editUser(user); openWithdrawDialog();  }">
+              Abheben
+            </v-btn>
             <v-dialog width="auto" v-if="withdrawDialog" v-model="withdrawDialog" persistent>
               <v-card>
-                <v-card-title>Abheben von {{ user.name }}</v-card-title>
+                <v-card-title>Abheben von {{ editedUser.name }}</v-card-title>
                 <v-card-text>
                   <v-form @submit.prevent="withdrawUser">
                     <v-text-field v-model="withdrawalAmount" label="Abhebebetrag"></v-text-field>
                     <v-btn @click="withdrawDialog = false" color="grey">Abbrechen</v-btn>
-                    <v-btn type="submit" color="primary">Abheben</v-btn>
+                    <v-btn color="primary" @click.prevent="withdrawUser()">Abheben</v-btn>
                   </v-form>
                 </v-card-text>
               </v-card>
             </v-dialog>
-            <v-btn color="red" variant="elevated" @click="openWithdrawDialog">
-              Abheben
-            </v-btn>
+
 
           </v-card-actions>
         </v-card>
