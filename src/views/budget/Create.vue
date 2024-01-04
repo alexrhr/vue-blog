@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, toRefs} from 'vue';
+import {onMounted, ref, } from 'vue';
 import {collection, doc, getDocs, deleteDoc, updateDoc} from 'firebase/firestore';
 import db from '/src/views/db';
 import {useRouter} from "vue-router";
@@ -92,7 +92,6 @@ async function withdrawUser() {
   if (editedUser.value && withdrawalAmount.value > 0) {
     const userDoc = doc(db, 'benutzer', editedUser.value.id);
     const newBalance = editedUser.value.balance - withdrawalAmount.value;
-    //const userData = toRefs(editedUser.value);
 
     await updateDoc(userDoc, {
       name: editedUser.value.name,

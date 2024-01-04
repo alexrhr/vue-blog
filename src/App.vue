@@ -33,7 +33,7 @@ const drawer = ref(true)
       <VBtn size="large" link to="/finanzen">
         Finanzen
       </VBtn>
-      <VBtn size="large" link to="/hinzufügen">
+      <VBtn size="large" link to="/aktualisieren">
         Aktualisieren
       </VBtn>
     </VBottomNavigation>
@@ -46,10 +46,10 @@ const drawer = ref(true)
         <VListItem  link to="/finanzen">
           Finanzen
         </VListItem>
-        <VListItem  link to="/hinzufügen">
+        <VListItem  link to="/aktualisieren">
           Aktualisieren
         </VListItem>
-        <VListItem  link to="/posts/create">
+        <VListItem  link to="/hinzufügen">
           Hinzufügen
         </VListItem>
       </VList>
@@ -58,7 +58,7 @@ const drawer = ref(true)
     <VMain>
       <RouterView></RouterView>
     </VMain>
-    <VBtn link to="/posts/create"
+    <VBtn link to="/hinzufügen"
           variant="elevated" icon="mdi-plus" color="indigo-darken-4"
           position="fixed" size="large" style="bottom:5em; right:3em">
     </VBtn>

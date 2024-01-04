@@ -7,9 +7,9 @@ const routes = [
   {path: '/startseite', component: LandingPage},
   {path: '/', component: LandingPage},
   {path: '/users/:id', component: Details},
-  {path: '/hinzufügen', component: Create},
+  {path: '/aktualisieren', component: Create},
   {path: '/finanzen', component: Details},
   {path: '/budget/create', component: EditUser},
-  {path: '/posts/create', component: EditUser},
+  {path: '/hinzufügen', component: EditUser},
 ];
 export default routes;
