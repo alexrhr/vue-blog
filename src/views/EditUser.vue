@@ -21,12 +21,15 @@ const sonstigeein = ref(0);
 const ratenzahlung = ref(0);
 const sonstigeaus = ref(0);
 
+
 onMounted(async () => {
-  // only execute for an existing user
   if (props.id) await loadUser(props.id);
 });
 
-// loads the user from Firestore, using its ID
+/**
+ * Lädt die Daten aller bereits existierenden Personen
+ * @returns {Promise<void>}
+ */
 async function loadUser(id) {
   const userDoc = doc(collection(db, "benutzer"), id);
   const user = await getDoc(userDoc);
@@ -49,6 +52,10 @@ async function loadUser(id) {
   }
 }
 
+/**
+ * Lädt den Benutzer und seine Daten hoch
+ * @returns {Promise<void>}
+ */
 async function saveUser() {
   if (!name.value.trim()) {
     nameError.value = true;
@@ -83,14 +90,19 @@ async function saveUser() {
   } else {
     await setDoc(doc(userRef, props.id), newUserData);
   }
-  router.push('/');
+  await router.push('/');
 }
 
+/**
+ * verhindert das eingeben von nicht richtig typisierten Geburtstagen
+ * @param v
+ * @returns {boolean|string}
+ */
 const validateGeburtstag = (v) => {
   const regeln = /^(0[1-9]|[1-2][0-9]|3[0-1]).(0[1-9]|1[0-2]).(\d{4})$/;
 
   if (!regeln.test(v)) {
-    return 'Ungültiges Format. Verwenden Sie das Format DD.MM.YYYY.';
+    return 'Ungültiges Format. Verwenden Sie das Format DD.MM.YYYY oder DD-MM-YYYY';
   }
   const [, day, month, year] = regeln.exec(v);
   if (parseInt(day, 10) > 31 || parseInt(day, 10) < 1 || parseInt(month, 10) > 12 || parseInt(month, 10) < 1) {
@@ -99,16 +111,31 @@ const validateGeburtstag = (v) => {
   return true;
 };
 
+/**
+ * Spricht eine Warnung aus vor negativen Zahlen oder Zahlen mit
+ * mehr als zwei Nachkommastellen. Verhindert diese jedoch nicht, da es Ausnahmefälle
+ * geben könnte
+ * @param v
+ * @returns {boolean|string}
+ * @constructor
+ */
 const PositiveNummer = (v) => {
-  if (parseFloat(v) <= 0) {
-    return 'Die Zahl muss positiv sein.';
+  const parsedValue = parseFloat(v);
+
+  if (isNaN(parsedValue) || parsedValue < 0) {
+    return 'Die Zahl sollte positiv sein.';
   }
   if (!/^\d+(\.\d{1,2})?$/.test(v)) {
-    return 'Die Zahl darf maximal zwei Nachkommastellen haben.';
+    return 'Die Zahl sollte maximal zwei Nachkommastellen haben.';
   }
   return true;
 };
 
+/**
+ * Verhindert die Doppelung von Namen
+ * @param v
+ * @returns {Promise<boolean|string>}
+ */
 const einzigartigerName = async (v) => {
   const Ref = collection(db, "benutzer");
   const q = query(Ref, where('name', '==', v));
@@ -136,7 +163,7 @@ const einzigartigerName = async (v) => {
               </v-col>
             </v-row>
             <v-text-field label="Name" variant="outlined" required v-model="name" placeholder="Name der neuen Person" :error="nameError" :rules="[einzigartigerName]"/>
-            <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Geburtstag bitte im Format 00.00.0000" :rules="[validateGeburtstag]"/>
+            <v-text-field label="Geburtstag" variant="outlined" v-model="geburtstag" placeholder="Geburtstag bitte im Format 00.00.0000 oder 00-00-0000" :rules="[validateGeburtstag]"/>
             <v-row v-if="verError">
               <v-col>
                 <v-alert type="error">Bitte geben sie das bestehende Verhältnis an.</v-alert>

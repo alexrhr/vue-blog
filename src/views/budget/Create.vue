@@ -4,14 +4,12 @@ import {collection, doc, getDocs, deleteDoc, updateDoc} from 'firebase/firestore
 import db from '/src/views/db';
 import {useRouter} from "vue-router";
 
-const props = defineProps(['id'])
 const router = useRouter()
 const users = ref([]);
 const editedUser = ref(null);
 const withdrawDialog = ref(false);
 const withdrawalAmount = ref(0);
 
-const isActive = ref()
 
 const isValid = ref()
 const nameRules = [(value) => value?.trim() ? true : 'Bitte geben Sie den Namen ein']
@@ -21,6 +19,10 @@ onMounted(async () => {
   await loadUsers();
 });
 
+/**
+ * Lädt die Daten aller bereits existierenden Personen
+ * @returns {Promise<void>}
+ */
 async function loadUsers() {
   const usersCollection = collection(db, 'benutzer');
   const usersSnapshot = await getDocs(usersCollection);
@@ -48,12 +50,20 @@ function editUser(user) {
   editedUser.value = {...user};
 }
 
-
+/**
+ * Löscht den Benutzer
+ * @param id
+ * @returns {Promise<void>}
+ */
 async function deleteUser(id) {
   await deleteDoc(doc(db, "benutzer", id));
   await loadUsers();
 }
 
+/**
+ * Speichert die aktualisierten Daten
+ * @returns {Promise<void>}
+ */
 async function saveUserChanges() {
   console.log("saveUserChanges called");
   console.log("editedUser before update:", editedUser.value);  if (editedUser.value) {
@@ -77,17 +87,19 @@ async function saveUserChanges() {
   await  router.push('/');
 }
 
-function cancelEdit() {
-  editedUser.value = null;
-}
 
+/**
+ * Öffnet Dialog
+ */
 function openWithdrawDialog() {
   withdrawDialog.value = true;
 }
 
+/**
+ * Entfernt den eingegebenen Betrag vom Kontostand
+ * @returns {Promise<void>}
+ */
 async function withdrawUser() {
-
-  console.log("Withdraw called. editedUser:", editedUser.value, "withdrawalAmount:", withdrawalAmount.value);
 
   if (editedUser.value && withdrawalAmount.value > 0) {
     const userDoc = doc(db, 'benutzer', editedUser.value.id);
@@ -109,11 +121,7 @@ async function withdrawUser() {
     await loadUsers();
     editedUser.value = null;
     withdrawDialog.value = false;
-    console.log("Withdraw successful. Navigating to /");
-  } else {
-    console.error("Withdraw failed. User or withdrawalAmount is invalid.");
   }
-
     await router.push('/');
 
 }
@@ -122,8 +130,8 @@ async function withdrawUser() {
 <template>
   <v-container>
     <h1>Personen Liste: </h1>
-    <v-row>
-      <v-col v-for="user in users" :key="user.id" sm="6" lg="4">
+    <v-row class="flex-container">
+      <v-col v-for="user in users" :key="user.id" class="flex-col" >
         <v-card>
           <v-card-title>{{ user.name }}</v-card-title>
           <v-card-subtitle>Kontostand: {{ user.balance }}</v-card-subtitle>
@@ -233,3 +241,15 @@ async function withdrawUser() {
     </v-row>
   </v-container>
 </template>
+
+<style scoped>
+.flex-container {
+display: flex;
+flex-wrap: wrap;
+}
+
+.flex-col {
+flex: 1;
+margin: 8px;
+}
+</style>
