@@ -1,10 +1,28 @@
-# Willkommen bei Budget-Planer
+# DonkeyKongRL – Reinforcement Learning in einer 2D-Spielumgebung
 
-Hast du dich je,als gefragt, wohin dein Geld verschwindet? Mit unserer Finanz-App
-behälst du den Überblick über Einnahmen, Ausgaben und sparst Zeit beim Verfolgen deiner Finanzen. Die 
-App bietet dir somit einen guten Überblick über deine Finanzen.
+## Projektbeschreibung
 
-### Übersichtliche Finanzstatistiken
+Dieses Projekt befasst sich mit der Entwicklung und Evaluierung von Reinforcement-Learning-Agenten (RL) in einer benutzerdefinierten 2D-Plattformspielumgebung, die sich konzeptionell am klassischen Donkey-Kong-Spiel orientiert. Ziel ist die Implementierung, das Training und der Vergleich verschiedener RL-Algorithmen im Hinblick auf ihre Leistungsfähigkeit beim Erreichen definierter Ziele innerhalb der Spielumgebung.
 
-Verfolge mühelos dein Budget, sieh dir Ausgabemuster an und entdecke, wie du finanzielle Ziele erreichen kannst.
-Und das alle für deine ganze Familie.
+## Motivation
+
+Die Anwendung von Reinforcement Learning in simulierten Spielumgebungen bietet ein ideales Testfeld zur Untersuchung von Lernverhalten, Exploration und Belohnungsstrategien. Dieses Projekt verbindet die wissenschaftliche Relevanz moderner RL-Methoden mit einer intuitiven visuellen Darstellung der Lernprozesse in einer eigens entwickelten Umgebung.
+
+## Projektstruktur
+
+```plaintext
+DonkeyKongRL-main/
+│
+├── DKRLAlteStaende/                         
+├── DonkeyKongRL-feature-login-form/
+│   ├── Games/
+│   │   └── BackupModelle/                   
+│   ├── VergleichModelle/
+│   │   ├── A2C/                             
+│   │   ├── Backup/                          
+│   │   └── DK/                              
+│   ├── platform_env.py                      
+│   └── *.py                                 
+├── Aktuelle_Data_Science_Entwicklung Donkey Kong.pdf
+└── .gitignore
+```
